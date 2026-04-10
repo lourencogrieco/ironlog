@@ -1585,18 +1585,18 @@ function buildReport(r, c) {
     if (!ideal) return '';
     var st  = ajStatus(atual, ideal, delta);
     var clr = STATUS_CLR[st]; var bg = STATUS_BG[st];
-    var mx  = Math.max(atual || 0, ideal, 1);
-    var pA  = Math.round((atual || 0) / mx * 100);
-    var pI  = Math.round(ideal / mx * 100);
+    var pct = atual != null ? Math.min(Math.round(atual / ideal * 100), 100) : 60;
     return '<div class="ajr"><div class="ajl"><span>' + lbl + '</span>' +
       '<div class="fx g2 ai">' +
       (atual != null ? '<span style="font-family:\'DM Mono\',monospace;font-size:9px;color:var(--mu)">' + atual + unit + '</span>' : '') +
-      '<span style="font-family:\'DM Mono\',monospace;font-size:9px;color:var(--ac)">→' + ideal + unit + '</span>' +
+      '<span style="font-family:\'DM Mono\',monospace;font-size:9px;color:' + clr + '">→' + ideal + unit + '</span>' +
       '<span style="font-family:\'DM Mono\',monospace;font-size:9px;padding:1px 8px;border-radius:2px;background:' + bg + ';color:' + clr + ';font-weight:700">' +
         (delta ? delta + ' ' : '') + STATUS_LBL[st] +
       '</span>' +
       '</div></div>' +
-      '<div class="ajb"><div class="aj-cur" style="width:' + pA + '%"></div><div class="aj-tgt" style="width:' + pI + '%;background:' + clr + '"></div></div></div>';
+      '<div style="position:relative;height:7px;background:' + bg + ';border-radius:4px;overflow:hidden">' +
+      '<div style="position:absolute;left:0;top:0;height:100%;width:' + pct + '%;background:' + clr + ';border-radius:4px;opacity:.88"></div>' +
+      '</div></div>';
   }
 
   var ajHtml =
