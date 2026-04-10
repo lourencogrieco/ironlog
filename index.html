@@ -1554,7 +1554,7 @@ function loadZip() {
   });
 }
 
-var WORKER_URL = 'WORKER_URL_AQUI'; // substitua pela URL do seu Cloudflare Worker
+var WORKER_URL = 'https://ironlog-proxy.lourenco-grieco.workers.dev';
 
 async function apiCall(messages, maxTok) {
   if (!WORKER_URL || WORKER_URL === 'WORKER_URL_AQUI') {
