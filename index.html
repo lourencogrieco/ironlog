@@ -1160,10 +1160,10 @@ function calcMacros() {
   S.dieta.macros = tot; sv();
   document.getElementById('macman').style.display = 'block';
   document.getElementById('macgrid').innerHTML =
-    '<div class="sc"><div class="sl">Calorias</div><div class="sv">' + tot.kcal + '</div><div class="su">kcal/dia</div></div>' +
-    '<div class="sc"><div class="sl">Proteína</div><div class="sv" style="color:var(--gn)">' + tot.p + 'g</div><div class="su">' + Math.round(tot.p*4) + ' kcal</div></div>' +
-    '<div class="sc"><div class="sl">Carboidrato</div><div class="sv" style="color:var(--ac)">' + tot.c + 'g</div><div class="su">' + Math.round(tot.c*4) + ' kcal</div></div>' +
-    '<div class="sc"><div class="sl">Gordura</div><div class="sv" style="color:var(--or)">' + tot.g + 'g</div><div class="su">' + Math.round(tot.g*9) + ' kcal</div></div>';
+    '<div class="sc"><div class="sl">Calorias</div><div class="sv" style="color:var(--gn)">' + tot.kcal + '</div><div class="su">kcal/dia</div></div>' +
+    '<div class="sc"><div class="sl">Proteína</div><div class="sv" style="color:var(--re)">' + tot.p + 'g</div><div class="su">' + Math.round(tot.p*4) + ' kcal</div></div>' +
+    '<div class="sc"><div class="sl">Carboidrato</div><div class="sv" style="color:#f5c518">' + tot.c + 'g</div><div class="su">' + Math.round(tot.c*4) + ' kcal</div></div>' +
+    '<div class="sc"><div class="sl">Gordura</div><div class="sv" style="color:var(--pu)">' + tot.g + 'g</div><div class="su">' + Math.round(tot.g*9) + ' kcal</div></div>';
   toast('Macros calculados!');
 }
 
@@ -1192,10 +1192,10 @@ async function analiseDieta() {
     var pos = (d.pontos_positivos || []).map(function(p) { return '<div style="font-size:11px;color:var(--mu);margin-bottom:2px">• ' + p + '</div>'; }).join('');
     var neg = (d.pontos_melhora || []).map(function(p) { return '<div style="font-size:11px;color:var(--mu);margin-bottom:2px">• ' + p + '</div>'; }).join('');
     document.getElementById('diares').innerHTML =
-      '<div class="sgrid"><div class="sc"><div class="sl">Calorias</div><div class="sv">' + d.kcal_total + '</div><div class="su">kcal/dia</div></div>' +
-      '<div class="sc"><div class="sl">Proteína</div><div class="sv" style="color:var(--gn)">' + d.proteina_g + 'g</div></div>' +
-      '<div class="sc"><div class="sl">Carboidrato</div><div class="sv" style="color:var(--ac)">' + d.carboidrato_g + 'g</div></div>' +
-      '<div class="sc"><div class="sl">Gordura</div><div class="sv" style="color:var(--or)">' + d.gordura_g + 'g</div></div></div>' +
+      '<div class="sgrid"><div class="sc"><div class="sl">Calorias</div><div class="sv" style="color:var(--gn)">' + d.kcal_total + '</div><div class="su">kcal/dia</div></div>' +
+      '<div class="sc"><div class="sl">Proteína</div><div class="sv" style="color:var(--re)">' + d.proteina_g + 'g</div></div>' +
+      '<div class="sc"><div class="sl">Carboidrato</div><div class="sv" style="color:#f5c518">' + d.carboidrato_g + 'g</div></div>' +
+      '<div class="sc"><div class="sl">Gordura</div><div class="sv" style="color:var(--pu)">' + d.gordura_g + 'g</div></div></div>' +
       '<div class="card"><div style="font-size:12px;color:var(--tx);line-height:1.7;margin-bottom:9px">' + (d.resumo || '') + '</div>' +
       (pos ? '<div class="fl" style="color:var(--gn);margin-bottom:4px">✓ Positivos</div>' + pos : '') +
       (neg ? '<div class="fl" style="color:var(--or);margin-top:9px;margin-bottom:4px">⚠ Melhorias</div>' + neg : '') + '</div>';
@@ -1576,10 +1576,10 @@ function buildReport(r, c) {
   }
 
   var ajHtml =
-    ajBar('Proteína', aj.proteina_atual_g, aj.proteina_ideal_g, aj.proteina_delta, 'g', 'var(--gn)') +
-    ajBar('Carboidratos', aj.carb_atual_g, aj.carb_ideal_g, aj.carb_delta, 'g', 'var(--ac)') +
-    ajBar('Gorduras', aj.gordura_atual_g, aj.gordura_ideal_g, aj.gordura_delta, 'g', 'var(--or)') +
-    ajBar('Calorias', aj.kcal_atual, aj.kcal_ideal, aj.kcal_delta, 'kcal', 'var(--pu)') +
+    ajBar('Proteína', aj.proteina_atual_g, aj.proteina_ideal_g, aj.proteina_delta, 'g', 'var(--re)') +
+    ajBar('Carboidratos', aj.carb_atual_g, aj.carb_ideal_g, aj.carb_delta, 'g', '#f5c518') +
+    ajBar('Gorduras', aj.gordura_atual_g, aj.gordura_ideal_g, aj.gordura_delta, 'g', 'var(--pu)') +
+    ajBar('Calorias', aj.kcal_atual, aj.kcal_ideal, aj.kcal_delta, 'kcal', 'var(--gn)') +
     ajBar('Água', aj.agua_atual_l, aj.agua_ideal_l, aj.agua_delta, 'L', 'var(--bl)') +
     ajBar('Sono', aj.sono_atual_h, aj.sono_ideal_h, aj.sono_delta, 'h', '#a78bfa');
 
