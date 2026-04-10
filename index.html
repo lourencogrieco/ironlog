@@ -479,7 +479,7 @@ textarea.fi{resize:vertical}.fs option{background:var(--s1)}
             <option value="bike">🚴 Bike/Spinning</option><option value="eliptico">Elíptico</option>
             <option value="hiit">⚡ HIIT</option><option value="natacao">🏊 Natação</option>
             <option value="jump">🦘 Jump</option><option value="esteira">Esteira inclinada</option>
-            <option value="remo">🚣 Remo</option><option value="outro">Outro</option>
+            <option value="remo">🚣 Remo</option><option value="escada">🪜 Escada/StairMaster</option><option value="outro">Outro</option>
           </select>
         </div>
         <div class="fg_"><label class="fl">Intensidade</label>
@@ -665,7 +665,7 @@ function renderCBanner() {
   var el = document.getElementById('cbanner');
   var c = S.cardio;
   if (!c || c.faz === 'nao') { el.innerHTML = ''; return; }
-  var tipos = {caminhada:'🚶 Caminhada',corrida:'🏃 Corrida',bike:'🚴 Bike',eliptico:'Elíptico',hiit:'⚡ HIIT',natacao:'🏊 Natação',jump:'🦘 Jump',esteira:'Esteira',remo:'🚣 Remo',outro:'Outro'};
+  var tipos = {caminhada:'🚶 Caminhada',corrida:'🏃 Corrida',bike:'🚴 Bike',eliptico:'Elíptico',hiit:'⚡ HIIT',natacao:'🏊 Natação',jump:'🦘 Jump',esteira:'Esteira',remo:'🚣 Remo',escada:'🪜 Escada',outro:'Outro'};
   el.innerHTML = '<div class="cbn"><div class="fx g2 ai wp">' +
     '<span style="font-family:\'Bebas Neue\',sans-serif;font-size:15px;letter-spacing:2px;color:var(--bl)">🏃 CARDIO</span>' +
     (c.tipo ? '<span class="badge bbl">' + (tipos[c.tipo] || c.tipo) + '</span>' : '') +
@@ -1250,8 +1250,9 @@ async function gerarAnalise() {
   var prompt = 'Analise os dados e retorne APENAS JSON sem markdown:\n' +
     '{"scores":{"treino":{"valor":0,"label":""},"dieta":{"valor":0,"label":""},"sono":{"valor":0,"label":""},"hidratacao":{"valor":0,"label":""},"cardio":{"valor":0,"label":""},"geral":{"valor":0,"label":""}},' +
     '"ajustes":{"proteina_atual_g":null,"proteina_ideal_g":0,"proteina_delta":"","carb_atual_g":null,"carb_ideal_g":0,"carb_delta":"","gordura_atual_g":null,"gordura_ideal_g":0,"gordura_delta":"","kcal_atual":null,"kcal_ideal":0,"kcal_delta":"","agua_atual_l":null,"agua_ideal_l":0,"agua_delta":"","sono_atual_h":null,"sono_ideal_h":0,"sono_delta":"","treino_volume":"manter","cardio_recomendacao":""},' +
+    '"alimentos":[{"nome":"","atual":"","sugerido":"","delta":"","motivo":""}],' +
     '"analise":{"resumo_geral":"","treino":"","dieta":"","recuperacao":"","suporte":"","projecao":""},' +
-    '"dicas":["","","","",""]}\n\n' +
+    '"dicas":["","","","",""]}\n\nPara o campo alimentos: liste cada alimento do plano do usuário com quantidade atual, sugerida, delta exato (ex: +50g, -10ml, +1 unidade) e motivo curto. Use delta vazio se manter. Preencha apenas alimentos listados na DIETA.\n\n' +
     'DADOS:\n- Peso:' + c.peso + 'kg Altura:' + c.altura + 'cm Idade:' + c.idade + ' Sexo:' + (c.sexo==='M'?'M':'F') + '\n' +
     '- %Gord:' + c.pgc + '% MuscEsq:' + c.massaMusc + 'kg MassaMagra:' + c.massaMagra + 'kg IMC:' + c.imc + '\n' +
     '- TMB:' + tmb + 'kcal TDEE:' + tdee + 'kcal\n' +
@@ -1268,7 +1269,7 @@ async function gerarAnalise() {
   document.getElementById('anres').style.display = 'none';
 
   try {
-    var res = await apiCall([{role:'user',content:prompt}], 2500);
+    var res = await apiCall([{role:'user',content:prompt}], 4000);
     var r = parseJ(res);
     document.getElementById('anload').style.display = 'none';
     document.getElementById('anres').style.display = 'block';
@@ -1324,6 +1325,34 @@ function buildReport(r, c) {
     ajBar('Água', aj.agua_atual_l, aj.agua_ideal_l, aj.agua_delta, 'L', 'var(--bl)') +
     ajBar('Sono', aj.sono_atual_h, aj.sono_ideal_h, aj.sono_delta, 'h', '#a78bfa');
 
+  var alimentos = Array.isArray(r.alimentos) ? r.alimentos.filter(function(a) { return a.nome; }) : [];
+  var foodHtml = alimentos.length ? (
+    '<div style="margin-top:14px"><div style="font-family:\'DM Mono\',monospace;font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--mu);margin-bottom:8px">Ajustes por alimento</div>' +
+    '<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:11px">' +
+    '<thead><tr>' +
+    '<th style="font-family:\'DM Mono\',monospace;font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--mu);padding:4px 8px;text-align:left;border-bottom:1px solid var(--br)">Alimento</th>' +
+    '<th style="font-family:\'DM Mono\',monospace;font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--mu);padding:4px 8px;text-align:center;border-bottom:1px solid var(--br)">Atual</th>' +
+    '<th style="font-family:\'DM Mono\',monospace;font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--mu);padding:4px 8px;text-align:center;border-bottom:1px solid var(--br)">Sugerido</th>' +
+    '<th style="font-family:\'DM Mono\',monospace;font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--mu);padding:4px 8px;text-align:center;border-bottom:1px solid var(--br)">Delta</th>' +
+    '<th style="font-family:\'DM Mono\',monospace;font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--mu);padding:4px 8px;text-align:left;border-bottom:1px solid var(--br)">Motivo</th>' +
+    '</tr></thead><tbody>' +
+    alimentos.map(function(a) {
+      var pos = a.delta && a.delta.startsWith('+');
+      var neg = a.delta && a.delta.startsWith('-');
+      var dClr = pos ? 'var(--gn)' : neg ? 'var(--re)' : 'var(--mu)';
+      var dBg  = pos ? '#001a0a'   : neg ? '#1a0000'   : 'var(--s2)';
+      var ico  = pos ? '↑ '        : neg ? '↓ '        : '→ ';
+      return '<tr style="border-bottom:1px solid var(--br)">' +
+        '<td style="padding:6px 8px;font-weight:600;color:var(--tx)">' + a.nome + '</td>' +
+        '<td style="padding:6px 8px;text-align:center;font-family:\'DM Mono\',monospace;color:var(--mu)">' + (a.atual || '—') + '</td>' +
+        '<td style="padding:6px 8px;text-align:center;font-family:\'DM Mono\',monospace;color:var(--ac)">' + (a.sugerido || '—') + '</td>' +
+        '<td style="padding:6px 8px;text-align:center">' + (a.delta ? '<span style="font-family:\'DM Mono\',monospace;font-size:9px;padding:2px 8px;border-radius:2px;background:' + dBg + ';color:' + dClr + ';font-weight:700">' + ico + a.delta + '</span>' : '<span style="color:var(--mu)">—</span>') + '</td>' +
+        '<td style="padding:6px 8px;color:var(--mu);line-height:1.5">' + (a.motivo || '') + '</td>' +
+        '</tr>';
+    }).join('') +
+    '</tbody></table></div></div>'
+  ) : '';
+
   var volClr = aj.treino_volume === 'aumentar' ? 'var(--gn)' : aj.treino_volume === 'diminuir' ? 'var(--re)' : 'var(--or)';
   var volIco = aj.treino_volume === 'aumentar' ? '↑' : aj.treino_volume === 'diminuir' ? '↓' : '→';
 
@@ -1359,7 +1388,7 @@ function buildReport(r, c) {
     '<div class="srg">' + rings + '</div>' +
 
     '<div class="card mb4"><div style="font-family:\'Bebas Neue\',sans-serif;font-size:17px;letter-spacing:2px;margin-bottom:4px">AJUSTES RECOMENDADOS</div>' +
-    '<div class="fl" style="margin-bottom:12px">Cinza=atual · Colorido=meta · Tag=diferença</div>' + ajHtml +
+    '<div class="fl" style="margin-bottom:12px">Cinza=atual · Colorido=meta · Tag=diferença</div>' + ajHtml + foodHtml +
     '<div style="display:flex;gap:8px;align-items:center;padding:9px;background:var(--s2);border-radius:3px;margin-top:8px">' +
     '<span style="font-size:12px;font-weight:600">Volume de treino:</span>' +
     '<span style="font-family:\'Bebas Neue\',sans-serif;font-size:15px;color:' + volClr + '">' + volIco + ' ' + (aj.treino_volume || 'manter').toUpperCase() + '</span></div>' +
