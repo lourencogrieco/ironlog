@@ -101,7 +101,7 @@ textarea.fi{resize:vertical}.fs option{background:var(--s1)}
 .chip.pr{border-color:var(--ac);color:var(--ac)}
 /* IMPORT */
 .dz{border:2px dashed var(--br)!important;cursor:pointer;transition:border-color .2s,background .2s}
-.dz.ov{border-color:var(--ac)!important;background:#181e00!important}
+.dz.ov{border-color:var(--ac)!important;background:#001808!important}
 .ir{display:grid;grid-template-columns:1fr 50px 68px 68px 68px;gap:5px;align-items:center;padding:6px 0;border-bottom:1px solid var(--br);font-size:11px}
 .ir:last-child{border-bottom:none}
 .ih{display:grid;grid-template-columns:1fr 50px 68px 68px 68px;gap:5px;font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--mu);padding-bottom:5px;border-bottom:1px solid var(--br);margin-bottom:4px}
@@ -165,32 +165,40 @@ textarea.fi{resize:vertical}.fs option{background:var(--s1)}
   <div class="fx g2 mb4 wp">
     <button class="btn bp" onclick="openM('m-day')">+ Novo Dia</button>
     <button class="btn bo" onclick="openCardioModal()">🏃 Cardio</button>
+    <button class="btn bo" id="btnimp" onclick="toggleTrnImp()">📥 Importar</button>
+  </div>
+  <div id="trnimpsec" style="display:none;margin-bottom:14px">
+    <div class="card dz" id="dz">
+      <div style="text-align:center;padding:24px 10px">
+        <div style="font-size:42px;margin-bottom:8px;opacity:.5">📄</div>
+        <div class="cttl">Arraste ou clique</div>
+        <div style="font-size:11px;color:var(--mu);margin-bottom:14px">PDF, Word (.docx) ou TXT</div>
+        <span class="btn bp">Escolher arquivo</span>
+        <input type="file" id="impfile" accept=".pdf,.docx,.txt" style="display:none">
+      </div>
+    </div>
+    <div id="impprev" style="display:none">
+      <div class="card mb4 fx jb ai">
+        <div class="fx g3 ai"><span style="font-size:26px" id="impicon">📄</span><div><div style="font-weight:600;font-size:12px" id="impname"></div><div class="fl" id="impsz"></div></div></div>
+        <button class="btn bo bs" onclick="resetImp()">Trocar</button>
+      </div>
+      <div id="impload" style="display:none;text-align:center;padding:24px"><div class="spin"></div><div style="font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;color:var(--ac);margin-top:10px">LENDO...</div></div>
+      <div id="impres" style="display:none"></div>
+      <div id="imperr" style="display:none" class="card"><div style="color:var(--re);font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;margin-bottom:5px">ERRO</div><div id="impermsg" style="font-size:11px;color:var(--mu)"></div></div>
+    </div>
   </div>
   <div id="cbanner"></div>
   <div id="daylist"></div>
 </div>
 
-<!-- ======= IMPORTAR ======= -->
+<!-- ======= IMPORTAR (redirect) ======= -->
 <div id="view-importar" class="view">
   <div class="stl">IMPORTAR TREINO</div>
-  <div class="sub">PDF ou Word — a IA lê e cadastra automaticamente</div>
-  <div class="card dz" id="dz">
-    <div style="text-align:center;padding:24px 10px">
-      <div style="font-size:42px;margin-bottom:8px;opacity:.5">📄</div>
-      <div class="cttl">Arraste ou clique</div>
-      <div style="font-size:11px;color:var(--mu);margin-bottom:14px">PDF, Word (.docx) ou TXT</div>
-      <span class="btn bp">Escolher arquivo</span>
-      <input type="file" id="impfile" accept=".pdf,.docx,.txt" style="display:none">
-    </div>
-  </div>
-  <div id="impprev" style="display:none">
-    <div class="card mb4 fx jb ai">
-      <div class="fx g3 ai"><span style="font-size:26px" id="impicon">📄</span><div><div style="font-weight:600;font-size:12px" id="impname"></div><div class="fl" id="impsz"></div></div></div>
-      <button class="btn bo bs" onclick="resetImp()">Trocar</button>
-    </div>
-    <div id="impload" style="display:none;text-align:center;padding:24px"><div class="spin"></div><div style="font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;color:var(--ac);margin-top:10px">LENDO...</div></div>
-    <div id="impres" style="display:none"></div>
-    <div id="imperr" style="display:none" class="card"><div style="color:var(--re);font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;margin-bottom:5px">ERRO</div><div id="impermsg" style="font-size:11px;color:var(--mu)"></div></div>
+  <div class="sub">Agora disponível diretamente na aba de Treinos</div>
+  <div class="card" style="text-align:center;padding:32px 16px">
+    <div style="font-size:42px;margin-bottom:12px;opacity:.4">📥</div>
+    <div style="font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--mu);margin-bottom:14px">Importação integrada na aba Treinos</div>
+    <button class="btn bp" onclick="goView('treinos');toggleTrnImp(true)">Ir para Treinos → Importar</button>
   </div>
 </div>
 
@@ -234,6 +242,7 @@ textarea.fi{resize:vertical}.fs option{background:var(--s1)}
   <div class="fx g2 mb4 wp">
     <button class="btn bp" id="bdm" onclick="setDietMode('manual')">✏️ Manual</button>
     <button class="btn bo" id="bdia" onclick="setDietMode('ia')">🤖 Analisar com IA</button>
+    <button class="btn bo" id="bdimp" onclick="setDietMode('imp')">📥 Importar</button>
   </div>
   <div id="dietman">
     <div class="card"><div class="fx jb ai mb4"><div class="cttl" style="margin-bottom:0">REFEIÇÕES</div><button class="btn bp bs" onclick="openM('m-ref')">+ Refeição</button></div><div id="reflist"><div style="font-size:12px;color:var(--mu)">Nenhuma refeição ainda.</div></div></div>
@@ -246,6 +255,26 @@ textarea.fi{resize:vertical}.fs option{background:var(--s1)}
     <button class="btn bp fw" onclick="analiseDieta()">🤖 Analisar com IA</button>
     <div id="diaload" style="display:none;text-align:center;padding:24px"><div class="spin"></div><div style="font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;color:var(--ac);margin-top:10px">ANALISANDO...</div></div>
     <div id="diares" style="display:none;margin-top:10px"></div>
+  </div>
+  <div id="dietimp" style="display:none">
+    <div class="card dz mb4" id="dietimdz" onclick="document.getElementById('dietimpfile').click()">
+      <div style="text-align:center;padding:20px 10px">
+        <div style="font-size:36px;margin-bottom:8px;opacity:.5">📄</div>
+        <div class="cttl">Arraste ou clique</div>
+        <div style="font-size:11px;color:var(--mu);margin-bottom:12px">PDF, Word (.docx) ou TXT com seu plano alimentar</div>
+        <span class="btn bp bs">Escolher arquivo</span>
+        <input type="file" id="dietimpfile" accept=".pdf,.docx,.txt" style="display:none" onchange="procDietImp(this.files[0])">
+      </div>
+    </div>
+    <div id="dietimpprev" style="display:none">
+      <div class="card mb4 fx jb ai">
+        <div class="fx g3 ai"><span style="font-size:24px" id="dietimpicon">📄</span><div><div style="font-weight:600;font-size:12px" id="dietimpname"></div><div class="fl" id="dietimpsz"></div></div></div>
+        <button class="btn bo bs" onclick="resetDietImp()">Trocar</button>
+      </div>
+      <div id="dietimpload" style="display:none;text-align:center;padding:24px"><div class="spin"></div><div style="font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;color:var(--ac);margin-top:10px">LENDO DIETA...</div></div>
+      <div id="dietimpres" style="display:none"></div>
+      <div id="dietimperr" style="display:none" class="card"><div style="color:var(--re);font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;margin-bottom:5px">ERRO</div><div id="dietimperrmsg" style="font-size:11px;color:var(--mu)"></div></div>
+    </div>
   </div>
 </div>
 
@@ -856,6 +885,15 @@ var impData = null;
   dz.addEventListener('click', function(e) { if (e.target === dz || e.target.parentElement === dz || e.target.parentElement.parentElement === dz) document.getElementById('impfile').click(); });
 })();
 
+function toggleTrnImp(forceOpen) {
+  var sec = document.getElementById('trnimpsec');
+  var btn = document.getElementById('btnimp');
+  var open = forceOpen !== undefined ? forceOpen : sec.style.display === 'none';
+  sec.style.display = open ? 'block' : 'none';
+  btn.className = 'btn ' + (open ? 'bp' : 'bo');
+  if (!open) resetImp();
+}
+
 function resetImp() {
   document.getElementById('impprev').style.display = 'none';
   document.getElementById('impfile').value = '';
@@ -938,7 +976,87 @@ function confirmImp() {
     });
     S.days.push({ id: S.ndi++, name: nm, muscles: d.muscles || '', exercises: exs });
   });
-  sv(); resetImp(); toast('✓ Importado!'); goView('treinos'); renderDays(); renderCBanner();
+  sv(); resetImp(); document.getElementById('trnimpsec').style.display='none'; document.getElementById('btnimp').className='btn bo'; toast('✓ Importado!'); renderDays(); renderCBanner();
+}
+
+// ============================================================
+// IMPORTAR DIETA
+// ============================================================
+var dietImpData = null;
+
+async function procDietImp(file) {
+  if (!file) return;
+  var ext = file.name.split('.').pop().toLowerCase();
+  if (!['pdf','docx','txt'].includes(ext)) return toast('Use PDF, Word ou TXT', 'er');
+  document.getElementById('dietimpprev').style.display = 'block';
+  document.getElementById('dietimpname').textContent = file.name;
+  document.getElementById('dietimpsz').textContent = (file.size/1024).toFixed(1) + ' KB';
+  document.getElementById('dietimpicon').textContent = ext === 'pdf' ? '📕' : ext === 'txt' ? '📝' : '📘';
+  document.getElementById('dietimpload').style.display = 'block';
+  document.getElementById('dietimpres').style.display = 'none';
+  document.getElementById('dietimperr').style.display = 'none';
+  var DPROMPT = 'Leia este plano alimentar e retorne APENAS JSON válido sem markdown:\n[{"nome":"Café da manhã","horario":"07:00","alimentos":"3 ovos mexidos\\n100g aveia\\n200ml leite desnatado"}]\nCada objeto é uma refeição. Use nomes e horários do documento. Alimentos: um por linha com quantidade.';
+  try {
+    var msgs;
+    if (ext === 'pdf') {
+      var b64 = await toB64(file);
+      msgs = [{role:'user',content:[{type:'document',source:{type:'base64',media_type:'application/pdf',data:b64}},{type:'text',text:DPROMPT}]}];
+    } else if (ext === 'txt') {
+      var txt = await file.text();
+      msgs = [{role:'user',content:DPROMPT + '\n\nTexto:\n' + txt}];
+    } else {
+      var txt2 = await exDocx(file);
+      msgs = [{role:'user',content:DPROMPT + '\n\nTexto extraído:\n' + txt2}];
+    }
+    var res = await apiCall(msgs, 2000);
+    var p = parseJ(res);
+    if (!p || !p.length) throw new Error('Não encontrei refeições no arquivo.');
+    dietImpData = p;
+    document.getElementById('dietimpload').style.display = 'none';
+    renderDietImpPrev(p);
+  } catch(e) {
+    document.getElementById('dietimpload').style.display = 'none';
+    document.getElementById('dietimperr').style.display = 'block';
+    document.getElementById('dietimperrmsg').textContent = e.message || 'Erro desconhecido';
+  }
+}
+
+function renderDietImpPrev(meals) {
+  var html = meals.map(function(m, i) {
+    return '<div class="card mb4">' +
+      '<div class="fx g2 ai mb4">' +
+      '<span class="badge by">' + (i+1) + '</span>' +
+      '<input type="text" value="' + (m.nome||'').replace(/"/g,'&quot;') + '" id="din' + i + '" style="background:transparent;border:none;border-bottom:1px solid var(--br);color:var(--ac);font-family:\'Bebas Neue\',sans-serif;font-size:17px;letter-spacing:2px;outline:none;flex:1">' +
+      '<input type="text" value="' + (m.horario||'') + '" id="dih' + i + '" placeholder="00:00" style="background:transparent;border:none;border-bottom:1px solid var(--br);color:var(--mu);font-family:\'DM Mono\',monospace;font-size:10px;outline:none;width:52px;text-align:right">' +
+      '</div>' +
+      '<textarea class="fi" id="dia' + i + '" rows="' + Math.min(6, ((m.alimentos||'').split('\n').length + 1)) + '" style="font-size:11px;line-height:1.7">' + (m.alimentos||'') + '</textarea>' +
+      '</div>';
+  }).join('');
+  document.getElementById('dietimpres').style.display = 'block';
+  document.getElementById('dietimpres').innerHTML =
+    '<div style="font-family:\'Bebas Neue\',sans-serif;font-size:18px;letter-spacing:2px;color:var(--gn);margin-bottom:3px">✓ DIETA IDENTIFICADA</div>' +
+    '<div style="font-size:11px;color:var(--mu);margin-bottom:12px">Revise e confirme as refeições</div>' + html +
+    '<div class="fx g3 mt4"><button class="btn bp" style="flex:1" onclick="confirmDietImp()">✓ IMPORTAR REFEIÇÕES</button><button class="btn bo" onclick="resetDietImp()">Cancelar</button></div>';
+}
+
+function confirmDietImp() {
+  if (!dietImpData) return;
+  if (!S.dieta) S.dieta = { refeicoes: [], textoIA: '', macros: null };
+  dietImpData.forEach(function(m, i) {
+    S.dieta.refeicoes.push({
+      nome: (document.getElementById('din' + i) || {value:m.nome}).value.trim() || m.nome,
+      horario: (document.getElementById('dih' + i) || {value:m.horario||''}).value.trim(),
+      alimentos: (document.getElementById('dia' + i) || {value:m.alimentos||''}).value.trim()
+    });
+  });
+  var n = dietImpData.length;
+  sv(); resetDietImp(); toast('✓ ' + n + ' refeições importadas!'); setDietMode('manual'); renderRefs();
+}
+
+function resetDietImp() {
+  document.getElementById('dietimpprev').style.display = 'none';
+  document.getElementById('dietimpfile').value = '';
+  dietImpData = null;
 }
 
 // ============================================================
@@ -947,8 +1065,10 @@ function confirmImp() {
 function setDietMode(m) {
   document.getElementById('dietman').style.display = m === 'manual' ? 'block' : 'none';
   document.getElementById('dietia').style.display = m === 'ia' ? 'block' : 'none';
+  document.getElementById('dietimp').style.display = m === 'imp' ? 'block' : 'none';
   document.getElementById('bdm').className = 'btn ' + (m === 'manual' ? 'bp' : 'bo');
   document.getElementById('bdia').className = 'btn ' + (m === 'ia' ? 'bp' : 'bo');
+  document.getElementById('bdimp').className = 'btn ' + (m === 'imp' ? 'bp' : 'bo');
 }
 
 function renderRefs() {
