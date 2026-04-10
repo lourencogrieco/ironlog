@@ -412,7 +412,7 @@ textarea.fi{resize:vertical}.fs option{background:var(--s1)}
   <div id="anform">
     <div class="card mb4" style="border-color:#1a2200;background:#0a1000">
       <div class="fl" style="color:var(--gn);margin-bottom:7px">🤖 O que será analisado</div>
-      <div style="font-size:12px;color:var(--mu);line-height:1.8">Treino, dieta, bioimpedância, sono, água, cardio e medicamentos — cruzados com seu objetivo para gerar scores, gráficos de ajuste e dicas práticas com valores específicos.</div>
+      <div style="font-size:12px;color:var(--mu);line-height:1.8">Adequação do treino ao objetivo, qualidade da dieta, cardio e medicamentos. <strong style="color:var(--tx)">Bioimpedância e dados corporais são opcionais</strong> — a análise funciona sem eles e fica mais precisa quando disponíveis.</div>
     </div>
     <div id="anchk" class="mb4"></div>
     <button class="btn bp fw" style="padding:12px;font-size:11px" onclick="gerarAnalise()">🎯 GERAR ANÁLISE COMPLETA</button>
@@ -1339,49 +1339,65 @@ function delMed(i) { S.meds.splice(i, 1); sv(); renderMeds(); }
 // ============================================================
 function renderAnChk() {
   var items = [
-    {l:'Treinos cadastrados', ok: S.days.length > 0},
-    {l:'Dados corporais / objetivo', ok: !!(S.corpo && S.corpo.obj)},
-    {l:'Dieta cadastrada', ok: !!(S.dieta && (S.dieta.refeicoes.length || S.dieta.textoIA))},
-    {l:'Medicamentos (opcional)', ok: !!(S.meds && S.meds.length)}
+    {l:'Treinos cadastrados', ok: S.days.length > 0, req: true},
+    {l:'Dieta cadastrada', ok: !!(S.dieta && (S.dieta.refeicoes.length || S.dieta.textoIA)), req: false},
+    {l:'Cardio configurado', ok: !!(S.cardio && S.cardio.faz && S.cardio.faz !== 'nao'), req: false},
+    {l:'Medicamentos', ok: !!(S.meds && S.meds.length), req: false},
+    {l:'Objetivo definido', ok: !!(S.corpo && S.corpo.obj), req: false},
+    {l:'Dados corporais (opcional)', ok: !!(S.corpo && S.corpo.peso), req: false},
+    {l:'Bioimpedância (opcional)', ok: !!(S.corpo && S.corpo.pgc != null), req: false}
   ];
   document.getElementById('anchk').innerHTML = '<div class="card">' +
     items.map(function(it) {
-      return '<div class="chk"><div class="dot" style="background:' + (it.ok ? 'var(--gn)' : 'var(--br)') + '"></div>' +
+      var clr = it.ok ? 'var(--gn)' : it.req ? 'var(--re)' : 'var(--br)';
+      var lbl = it.ok ? '✓ OK' : it.req ? '⚠ Obrigatório' : 'Opcional';
+      var lclr = it.ok ? 'var(--gn)' : it.req ? 'var(--re)' : 'var(--mu)';
+      return '<div class="chk"><div class="dot" style="background:' + clr + '"></div>' +
         '<span style="color:' + (it.ok ? 'var(--tx)' : 'var(--mu)') + '">' + it.l + '</span>' +
-        '<span style="font-family:\'DM Mono\',monospace;font-size:9px;color:' + (it.ok ? 'var(--gn)' : 'var(--mu)') + ';margin-left:auto">' + (it.ok ? '✓ OK' : 'Pendente') + '</span></div>';
+        '<span style="font-family:\'DM Mono\',monospace;font-size:9px;color:' + lclr + ';margin-left:auto">' + lbl + '</span></div>';
     }).join('') + '</div>';
 }
 
 async function gerarAnalise() {
   var c = S.corpo || {};
-  var fts = {sedentario:1.2,leve:1.375,moderado:1.55,ativo:1.725,atleta:1.9};
-  var fat = fts[c.ativ || 'moderado'] || 1.55;
-  var tmb = c.tmb || Math.round(c.sexo === 'M' ? 10*(c.peso||70)+6.25*(c.altura||170)-5*(c.idade||30)+5 : 10*(c.peso||60)+6.25*(c.altura||160)-5*(c.idade||30)-161);
-  var tdee = Math.round(tmb * fat);
-  var mc = S.dieta && S.dieta.macros ? S.dieta.macros : null;
   var ca = S.cardio || {};
   var objMap = {ganho_massa:'Ganho de massa muscular',cutting:'Cutting',recomposicao:'Recomposição corporal',manutencao:'Manutenção',forca:'Ganho de força',definicao:'Definição muscular'};
-  var trDesc = S.days.map(function(d) { return d.name + ': ' + d.exercises.map(function(e) { return e.name; }).join(', '); }).join('\n');
-  var dietDesc = (S.dieta && S.dieta.textoIA) ? S.dieta.textoIA : ((S.dieta && S.dieta.refeicoes) ? S.dieta.refeicoes.map(function(r) { return r.nome + ': ' + r.alimentos; }).join('\n') : 'Não informada');
-  var medsDesc = S.meds.length ? S.meds.map(function(m) { return m.nome + ' (' + m.categoria + ') ' + m.dose + ' ' + m.freq + ' via ' + m.via; }).join('\n') : 'Nenhum';
-  var cardioDesc = (ca.faz && ca.faz !== 'nao') ? (ca.tipo + ' ' + (ca.duracao||'?') + 'min ' + (ca.freq||'?') + 'x/sem ' + ca.intensidade + ' momento:' + ca.momento) : 'Não pratica cardio';
+  var objetivo = objMap[c.obj] || c.obj || 'Não informado';
+  var trDesc = S.days.map(function(d) {
+    var exs = d.exercises.map(function(e) { return e.name + ' (' + e.sets + 'x' + e.reps + (e.weight ? ' ' + e.weight + 'kg' : '') + ')'; }).join(', ');
+    return d.name + (d.muscles ? ' [' + d.muscles + ']' : '') + ': ' + exs;
+  }).join('\n');
+  var dietDesc = (S.dieta && S.dieta.textoIA) ? S.dieta.textoIA : ((S.dieta && S.dieta.refeicoes && S.dieta.refeicoes.length) ? S.dieta.refeicoes.map(function(r) { return (r.horario ? r.horario + ' ' : '') + r.nome + ': ' + r.alimentos; }).join('\n') : 'Não informada');
+  var mc = S.dieta && S.dieta.macros ? S.dieta.macros : null;
+  var medsDesc = S.meds.length ? S.meds.map(function(m) { return m.nome + ' (' + m.categoria + ') ' + m.dose + ' ' + m.freq + ' via ' + m.via + (m.obs ? ' — ' + m.obs : ''); }).join('\n') : 'Nenhum';
+  var cardioDesc = (ca.faz && ca.faz !== 'nao') ? (ca.tipo + ' ' + (ca.duracao||'?') + 'min ' + (ca.freq||'?') + 'x/sem intensidade:' + ca.intensidade + ' momento:' + ca.momento + (ca.obj ? ' objetivo:' + ca.obj : '')) : 'Não pratica cardio';
 
-  var prompt = 'Analise os dados e retorne APENAS JSON sem markdown:\n' +
+  // Dados corporais — opcionais, incluídos apenas se preenchidos
+  var corpoLines = [];
+  if (c.peso) corpoLines.push('Peso:' + c.peso + 'kg' + (c.altura ? ' Altura:' + c.altura + 'cm' : '') + (c.idade ? ' Idade:' + c.idade : '') + (c.sexo ? ' Sexo:' + c.sexo : ''));
+  if (c.pgc != null) corpoLines.push('%Gordura:' + c.pgc + '%' + (c.massaMusc ? ' MuscEsq:' + c.massaMusc + 'kg' : '') + (c.massaMagra ? ' MassaMagra:' + c.massaMagra + 'kg' : '') + (c.imc ? ' IMC:' + c.imc : ''));
+  if (c.tmb) { var fts={sedentario:1.2,leve:1.375,moderado:1.55,ativo:1.725,atleta:1.9}; var tdee=Math.round(c.tmb*(fts[c.ativ||'moderado']||1.55)); corpoLines.push('TMB:' + c.tmb + 'kcal TDEE:' + tdee + 'kcal'); }
+  if (c.aguaDia) corpoLines.push('Água/dia:' + c.aguaDia + 'L');
+  if (c.sono) corpoLines.push('Sono:' + c.sono + 'h qualidade:' + (c.sonoQ||'não informada'));
+  if (c.ativ) corpoLines.push('Nível atividade:' + c.ativ);
+  if (c.per) corpoLines.push('Período objetivo:' + c.per + 'semanas');
+  if (c.obs) corpoLines.push('Obs:' + c.obs);
+  var corpoDesc = corpoLines.length ? corpoLines.join('\n') : null;
+
+  var prompt = 'Analise os dados de treino e retorne APENAS JSON sem markdown:\n' +
     '{"scores":{"treino":{"valor":0,"label":""},"dieta":{"valor":0,"label":""},"sono":{"valor":0,"label":""},"hidratacao":{"valor":0,"label":""},"cardio":{"valor":0,"label":""},"geral":{"valor":0,"label":""}},' +
     '"ajustes":{"proteina_atual_g":null,"proteina_ideal_g":0,"proteina_delta":"","carb_atual_g":null,"carb_ideal_g":0,"carb_delta":"","gordura_atual_g":null,"gordura_ideal_g":0,"gordura_delta":"","kcal_atual":null,"kcal_ideal":0,"kcal_delta":"","agua_atual_l":null,"agua_ideal_l":0,"agua_delta":"","sono_atual_h":null,"sono_ideal_h":0,"sono_delta":"","treino_volume":"manter","cardio_recomendacao":""},' +
     '"alimentos":[{"nome":"","atual":"","sugerido":"","delta":"","motivo":""}],' +
     '"analise":{"resumo_geral":"","treino":"","dieta":"","recuperacao":"","suporte":"","projecao":""},' +
-    '"dicas":["","","","",""]}\n\nPara o campo alimentos: liste cada alimento do plano do usuário com quantidade atual, sugerida, delta exato (ex: +50g, -10ml, +1 unidade) e motivo curto. Use delta vazio se manter. Preencha apenas alimentos listados na DIETA.\n\n' +
-    'DADOS:\n- Peso:' + c.peso + 'kg Altura:' + c.altura + 'cm Idade:' + c.idade + ' Sexo:' + (c.sexo==='M'?'M':'F') + '\n' +
-    '- %Gord:' + c.pgc + '% MuscEsq:' + c.massaMusc + 'kg MassaMagra:' + c.massaMagra + 'kg IMC:' + c.imc + '\n' +
-    '- TMB:' + tmb + 'kcal TDEE:' + tdee + 'kcal\n' +
-    '- Água/dia:' + c.aguaDia + 'L Sono:' + c.sono + 'h/noite qualidade:' + c.sonoQ + '\n' +
-    '- Objetivo:' + (objMap[c.obj]||c.obj||'Não informado') + ' Atividade:' + c.ativ + ' Período:' + (c.per||8) + 'sem\n' +
-    '- Obs:' + (c.obs||'Nenhuma') + '\n' +
-    'TREINOS (' + S.days.length + ' dias, ' + S.logs.length + ' sessões):\n' + trDesc + '\n' +
+    '"dicas":["","","","",""]}\n\n' +
+    'FOCO DA ANÁLISE: (1) adequação do treino ao objetivo, (2) qualidade da dieta para suportar o treino, (3) impacto dos medicamentos/suplementos. Dados corporais são opcionais — se ausentes, baseie os scores no que está disponível e indique nos labels quando falta dado.\n' +
+    'Para alimentos: liste cada alimento da dieta com delta exato (ex: +50g) e motivo curto. Delta vazio = manter.\n\n' +
+    'OBJETIVO: ' + objetivo + '\n' +
+    'TREINOS (' + S.days.length + ' dias, ' + S.logs.length + ' sessões registradas):\n' + trDesc + '\n' +
     'CARDIO: ' + cardioDesc + '\n' +
-    'DIETA:\n' + dietDesc + (mc ? '\nMacros:' + mc.kcal + 'kcal ' + mc.p + 'g prot ' + mc.c + 'g carb ' + mc.g + 'g gord' : '') + '\n' +
-    'MEDICAMENTOS:\n' + medsDesc;
+    'DIETA:\n' + dietDesc + (mc ? '\nMacros estimados: ' + mc.kcal + 'kcal ' + mc.p + 'g prot ' + mc.c + 'g carb ' + mc.g + 'g gord' : '') + '\n' +
+    'MEDICAMENTOS/SUPLEMENTOS:\n' + medsDesc +
+    (corpoDesc ? '\n\nDADOS CORPORAIS (bioimpedância/manual):\n' + corpoDesc : '\n\nDADOS CORPORAIS: não informados — baseie análise no treino e dieta.');
 
   document.getElementById('anform').style.display = 'none';
   document.getElementById('anload').style.display = 'block';
