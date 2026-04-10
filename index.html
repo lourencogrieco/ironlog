@@ -113,14 +113,14 @@ textarea.fi{resize:vertical}.fs option{background:var(--s1)}
 /* MEDS */
 .mdc{background:var(--s1);border:1px solid var(--br);border-radius:4px;padding:10px 12px;margin-bottom:7px;display:flex;justify-content:space-between;align-items:flex-start;gap:9px}
 .mcat{font-family:'DM Mono',monospace;font-size:9px;padding:2px 7px;border-radius:2px;text-transform:uppercase;letter-spacing:1px;font-weight:700}
-.ch{background:#3a1a00;color:var(--or);border:1px solid var(--or)}.cp{background:#001a2a;color:var(--bl);border:1px solid var(--bl)}
+.ch{background:#3a1a00;color:var(--or);border:1px solid var(--or)}.cp{background:#001a0a;color:var(--ac);border:1px solid var(--ac)}
 .cs{background:#001a0a;color:var(--gn);border:1px solid var(--gn)}.cm{background:#1a001a;color:var(--pu);border:1px solid var(--pu)}
 .csa{background:#1a0000;color:var(--re);border:1px solid var(--re)}.co{background:var(--s2);color:var(--mu);border:1px solid var(--br)}
 /* CORPO SEGMENTAR */
 .sg5{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin-top:10px;text-align:center}
 .sgc{background:var(--s1);border:1px solid var(--br);border-radius:4px;padding:8px 5px}
 /* CARDIO BANNER */
-.cbn{background:#050e15;border:1px solid var(--bl);border-radius:4px;padding:10px 14px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:7px}
+.cbn{background:#021a0c;border:1px solid var(--ac);border-radius:4px;padding:10px 14px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:7px}
 /* ANÁLISE VISUAL */
 .disc{background:#0d0d0d;border:1px solid #2a2a2a;border-left:3px solid var(--or);border-radius:4px;padding:12px 15px;margin-top:16px;font-size:11px;color:var(--mu);line-height:1.8}
 .ajr{margin-bottom:12px}
@@ -148,7 +148,6 @@ textarea.fi{resize:vertical}.fs option{background:var(--s1)}
 
 <nav id="nav">
   <button class="nb on" data-v="treinos">🏋️ Treinos</button>
-  <button class="nb" data-v="importar">⬆ Importar</button>
   <button class="nb" data-v="registrar">▶ Registrar</button>
   <button class="nb" data-v="progresso">📈 Progresso</button>
   <button class="nb" data-v="historico">📋 Histórico</button>
@@ -696,8 +695,8 @@ function renderCBanner() {
   if (!c || c.faz === 'nao') { el.innerHTML = ''; return; }
   var tipos = {caminhada:'🚶 Caminhada',corrida:'🏃 Corrida',bike:'🚴 Bike',eliptico:'Elíptico',hiit:'⚡ HIIT',natacao:'🏊 Natação',jump:'🦘 Jump',esteira:'Esteira',remo:'🚣 Remo',escada:'🪜 Escada',outro:'Outro'};
   el.innerHTML = '<div class="cbn"><div class="fx g2 ai wp">' +
-    '<span style="font-family:\'Bebas Neue\',sans-serif;font-size:15px;letter-spacing:2px;color:var(--bl)">🏃 CARDIO</span>' +
-    (c.tipo ? '<span class="badge bbl">' + (tipos[c.tipo] || c.tipo) + '</span>' : '') +
+    '<span style="font-family:\'Bebas Neue\',sans-serif;font-size:15px;letter-spacing:2px;color:var(--ac)">🏃 CARDIO</span>' +
+    (c.tipo ? '<span class="badge by">' + (tipos[c.tipo] || c.tipo) + '</span>' : '') +
     (c.duracao ? '<span class="badge bm">' + c.duracao + 'min</span>' : '') +
     (c.freq ? '<span class="badge bm">' + c.freq + 'x/sem</span>' : '') +
     (c.intensidade ? '<span class="badge bm">' + c.intensidade + '</span>' : '') +
@@ -1267,7 +1266,7 @@ function calcInd() {
     (c.visc != null ? '<div class="sc"><div class="sl">Gordura visceral</div><div class="sv" style="color:' + (c.visc <= 9 ? 'var(--gn)' : 'var(--re)') + '">' + c.visc + '</div><div class="su">nível (1-20)</div></div>' : '') +
     (c.aguaBio ? '<div class="sc"><div class="sl">Água corporal</div><div class="sv">' + c.aguaBio + 'L</div><div class="su">' + Math.round(c.aguaBio/c.peso*100) + '%</div></div>' : '') +
     (c.score ? '<div class="sc"><div class="sl">Score InBody</div><div class="sv" style="color:var(--ac)">' + c.score + '</div><div class="su">de 100</div></div>' : '') +
-    (c.aguaDia ? '<div class="sc"><div class="sl">💧 Água/dia</div><div class="sv" style="color:var(--bl)">' + c.aguaDia + 'L</div><div class="su">consumida</div></div>' : '') +
+    (c.aguaDia ? '<div class="sc"><div class="sl">💧 Água/dia</div><div class="sv" style="color:var(--ac)">' + c.aguaDia + 'L</div><div class="su">consumida</div></div>' : '') +
     (c.sono ? '<div class="sc"><div class="sl">😴 Sono</div><div class="sv" style="color:var(--pu)">' + c.sono + 'h</div><div class="su">' + (c.sonoQ || '') + '</div></div>' : '');
   var sg = c.seg;
   if (sg && (sg.m.bd || sg.m.tr)) {
