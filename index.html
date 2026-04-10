@@ -397,7 +397,30 @@ textarea.fi{resize:vertical}.fs option{background:var(--s1)}
 <div id="view-meds" class="view">
   <div class="stl">MEDICAMENTOS</div>
   <div class="sub">Hormônios, peptídeos, suplementos e medicamentos</div>
-  <div class="fx g2 mb4"><button class="btn bp" onclick="openM('m-med')">+ Adicionar</button></div>
+  <div class="fx g2 mb4 wp">
+    <button class="btn bp" onclick="openM('m-med')">+ Adicionar</button>
+    <button class="btn bo" id="btnmedsimp" onclick="toggleMedImp()">📥 Importar</button>
+  </div>
+  <div id="medimpsec" style="display:none;margin-bottom:14px">
+    <div class="card dz mb4" id="medimdz" onclick="document.getElementById('medimpfile').click()">
+      <div style="text-align:center;padding:20px 10px">
+        <div style="font-size:36px;margin-bottom:8px;opacity:.5">💊</div>
+        <div class="cttl">Arraste ou clique</div>
+        <div style="font-size:11px;color:var(--mu);margin-bottom:12px">PDF, Word (.docx) ou TXT com sua prescrição ou protocolo</div>
+        <span class="btn bp bs">Escolher arquivo</span>
+        <input type="file" id="medimpfile" accept=".pdf,.docx,.txt" style="display:none" onchange="procMedImp(this.files[0])">
+      </div>
+    </div>
+    <div id="medimpprev" style="display:none">
+      <div class="card mb4 fx jb ai">
+        <div class="fx g3 ai"><span style="font-size:24px" id="medimpicon">📄</span><div><div style="font-weight:600;font-size:12px" id="medimpname"></div><div class="fl" id="medimpsz"></div></div></div>
+        <button class="btn bo bs" onclick="resetMedImp()">Trocar</button>
+      </div>
+      <div id="medimpload" style="display:none;text-align:center;padding:24px"><div class="spin"></div><div style="font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;color:var(--ac);margin-top:10px">LENDO...</div></div>
+      <div id="medimpres" style="display:none"></div>
+      <div id="medimperr" style="display:none" class="card"><div style="color:var(--re);font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;margin-bottom:5px">ERRO</div><div id="medimperrmsg" style="font-size:11px;color:var(--mu)"></div></div>
+    </div>
+  </div>
   <div id="medlist"><div class="emp"><div class="ei">💊</div><div class="et">Nenhum cadastrado</div></div></div>
   <div class="card mt4" style="border-color:#1a1500;background:#0d0c00">
     <div class="fl" style="color:var(--or);margin-bottom:6px">⚠️ Aviso importante</div>
@@ -1333,6 +1356,106 @@ function saveMed() {
 }
 
 function delMed(i) { S.meds.splice(i, 1); sv(); renderMeds(); }
+
+// ============================================================
+// IMPORTAR MEDICAMENTOS
+// ============================================================
+var medImpData = null;
+
+function toggleMedImp(forceOpen) {
+  var sec = document.getElementById('medimpsec');
+  var btn = document.getElementById('btnmedsimp');
+  var open = forceOpen !== undefined ? forceOpen : sec.style.display === 'none';
+  sec.style.display = open ? 'block' : 'none';
+  btn.className = 'btn ' + (open ? 'bp' : 'bo');
+  if (!open) resetMedImp();
+}
+
+function resetMedImp() {
+  document.getElementById('medimpprev').style.display = 'none';
+  document.getElementById('medimpfile').value = '';
+  medImpData = null;
+}
+
+async function procMedImp(file) {
+  if (!file) return;
+  var ext = file.name.split('.').pop().toLowerCase();
+  if (!['pdf','docx','txt'].includes(ext)) return toast('Use PDF, Word ou TXT', 'er');
+  document.getElementById('medimpprev').style.display = 'block';
+  document.getElementById('medimpname').textContent = file.name;
+  document.getElementById('medimpsz').textContent = (file.size/1024).toFixed(1) + ' KB';
+  document.getElementById('medimpicon').textContent = ext === 'pdf' ? '📕' : ext === 'txt' ? '📝' : '📘';
+  document.getElementById('medimpload').style.display = 'block';
+  document.getElementById('medimpres').style.display = 'none';
+  document.getElementById('medimperr').style.display = 'none';
+  var MPROMPT = 'Leia este documento e extraia todos os medicamentos, hormônios, peptídeos e suplementos. Retorne APENAS JSON válido sem markdown:\n[{"nome":"Testosterona Enantato","categoria":"hormonio","dose":"250mg","freq":"2x/semana","via":"injetavel","inicio":"Semana 1","obs":""}]\nCategorias: hormonio, peptideo, suplemento, medicamento, sarm, outro. Via: oral, injetavel, subcutaneo, topico, sublingual, outro.';
+  try {
+    var msgs;
+    if (ext === 'pdf') {
+      var b64 = await toB64(file);
+      msgs = [{role:'user',content:[{type:'document',source:{type:'base64',media_type:'application/pdf',data:b64}},{type:'text',text:MPROMPT}]}];
+    } else if (ext === 'txt') {
+      var txt = await file.text();
+      msgs = [{role:'user',content:MPROMPT + '\n\nTexto:\n' + txt}];
+    } else {
+      var txt2 = await exDocx(file);
+      msgs = [{role:'user',content:MPROMPT + '\n\nTexto extraído:\n' + txt2}];
+    }
+    var res = await apiCall(msgs, 2000);
+    var p = parseJ(res);
+    if (!p || !p.length) throw new Error('Não encontrei medicamentos no arquivo.');
+    medImpData = p;
+    document.getElementById('medimpload').style.display = 'none';
+    renderMedImpPrev(p);
+  } catch(e) {
+    document.getElementById('medimpload').style.display = 'none';
+    document.getElementById('medimperr').style.display = 'block';
+    document.getElementById('medimperrmsg').textContent = e.message || 'Erro desconhecido';
+  }
+}
+
+function renderMedImpPrev(meds) {
+  var cats = ['hormonio','peptideo','suplemento','medicamento','sarm','outro'];
+  var vias = ['oral','injetavel','subcutaneo','topico','sublingual','outro'];
+  var html = meds.map(function(m, i) {
+    var catOpts = cats.map(function(c) { return '<option value="' + c + '"' + (m.categoria === c ? ' selected' : '') + '>' + c + '</option>'; }).join('');
+    var viaOpts = vias.map(function(v) { return '<option value="' + v + '"' + (m.via === v ? ' selected' : '') + '>' + v + '</option>'; }).join('');
+    return '<div class="card mb4">' +
+      '<div class="fx g2 ai mb4"><span class="badge by">' + (i+1) + '</span>' +
+      '<input type="text" value="' + (m.nome||'').replace(/"/g,'&quot;') + '" id="miN' + i + '" style="background:transparent;border:none;border-bottom:1px solid var(--br);color:var(--ac);font-family:\'Bebas Neue\',sans-serif;font-size:17px;letter-spacing:2px;outline:none;flex:1"></div>' +
+      '<div class="fg">' +
+      '<div class="fg_"><label class="fl">Categoria</label><select class="fs" id="miC' + i + '">' + catOpts + '</select></div>' +
+      '<div class="fg_"><label class="fl">Dose</label><input type="text" class="fi" id="miD' + i + '" value="' + (m.dose||'') + '"></div>' +
+      '<div class="fg_"><label class="fl">Frequência</label><input type="text" class="fi" id="miF' + i + '" value="' + (m.freq||'') + '"></div>' +
+      '<div class="fg_"><label class="fl">Via</label><select class="fs" id="miV' + i + '">' + viaOpts + '</select></div>' +
+      '<div class="fg_"><label class="fl">Início</label><input type="text" class="fi" id="miI' + i + '" value="' + (m.inicio||'') + '"></div>' +
+      '</div>' +
+      (m.obs ? '<div style="font-size:11px;color:var(--mu);margin-top:6px">' + m.obs + '</div>' : '') +
+      '</div>';
+  }).join('');
+  document.getElementById('medimpres').style.display = 'block';
+  document.getElementById('medimpres').innerHTML =
+    '<div style="font-family:\'Bebas Neue\',sans-serif;font-size:18px;letter-spacing:2px;color:var(--gn);margin-bottom:3px">✓ ' + meds.length + ' ITEM(NS) IDENTIFICADO(S)</div>' +
+    '<div style="font-size:11px;color:var(--mu);margin-bottom:12px">Revise e confirme</div>' + html +
+    '<div class="fx g3 mt4"><button class="btn bp" style="flex:1" onclick="confirmMedImp()">✓ IMPORTAR</button><button class="btn bo" onclick="resetMedImp()">Cancelar</button></div>';
+}
+
+function confirmMedImp() {
+  if (!medImpData) return;
+  medImpData.forEach(function(m, i) {
+    S.meds.push({
+      nome: (document.getElementById('miN' + i) || {value:m.nome}).value.trim() || m.nome,
+      categoria: (document.getElementById('miC' + i) || {value:m.categoria||'outro'}).value,
+      dose: (document.getElementById('miD' + i) || {value:m.dose||''}).value.trim(),
+      freq: (document.getElementById('miF' + i) || {value:m.freq||''}).value.trim(),
+      via: (document.getElementById('miV' + i) || {value:m.via||'oral'}).value,
+      inicio: (document.getElementById('miI' + i) || {value:m.inicio||''}).value.trim(),
+      obs: m.obs || ''
+    });
+  });
+  var n = medImpData.length;
+  sv(); resetMedImp(); toggleMedImp(false); toast('✓ ' + n + ' item(ns) importado(s)!'); renderMeds();
+}
 
 // ============================================================
 // ANÁLISE IA
