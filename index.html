@@ -441,23 +441,43 @@ textarea.fi{resize:vertical}.fs option{background:var(--s1)}
     <button class="btn bp" id="btneximp" onclick="toggleExImp()">📥 Importar Laudo</button>
   </div>
   <div id="eximpsec" style="display:none;margin-bottom:14px">
-    <div class="card dz mb4" id="eximdz" onclick="document.getElementById('eximpfile').click()">
-      <div style="text-align:center;padding:20px 10px">
-        <div style="font-size:36px;margin-bottom:8px;opacity:.5">🧪</div>
-        <div class="cttl">Arraste ou clique</div>
-        <div style="font-size:11px;color:var(--mu);margin-bottom:12px">PDF, Word (.docx) ou TXT com resultados de exames</div>
-        <span class="btn bp bs">Escolher arquivo</span>
-        <input type="file" id="eximpfile" accept=".pdf,.docx,.txt" style="display:none" onchange="procExImp(this.files[0])">
+    <!-- Tabs: arquivo vs colar texto -->
+    <div class="fx g2 mb4">
+      <button class="btn bp bs" id="exibtnarq" onclick="setExMode('arq')">📄 Arquivo</button>
+      <button class="btn bo bs" id="exibtnttx" onclick="setExMode('txt')">📋 Colar texto</button>
+    </div>
+    <!-- Modo arquivo -->
+    <div id="eximarq">
+      <div class="card dz mb4" id="eximdz">
+        <div style="text-align:center;padding:20px 10px">
+          <div style="font-size:36px;margin-bottom:8px;opacity:.5">🧪</div>
+          <div class="cttl">Clique para escolher</div>
+          <div style="font-size:11px;color:var(--mu);margin-bottom:12px">PDF, Word (.docx) ou TXT</div>
+          <label class="btn bp bs" style="cursor:pointer">Escolher arquivo
+            <input type="file" id="eximpfile" accept=".pdf,.docx,.txt" style="display:none" onchange="procExImp(this.files[0])">
+          </label>
+        </div>
       </div>
     </div>
+    <!-- Modo texto -->
+    <div id="eximtxt" style="display:none">
+      <div class="fg_ mb4"><label class="fl">Cole o texto do laudo aqui</label>
+        <textarea class="fi" id="extxtarea" rows="10" placeholder="Cole aqui o texto copiado do portal do laboratório (Dasa, Fleury, Hermes Pardini, etc.)&#10;&#10;Ex:&#10;Testosterona Total: 800 ng/dL  VR: 300-1000&#10;Hemoglobina: 15,2 g/dL  VR: 13,5-17,5&#10;..."></textarea>
+      </div>
+      <button class="btn bp fw" onclick="procExTxt()">🤖 Analisar com IA</button>
+    </div>
+    <!-- Preview / resultado -->
     <div id="eximpprev" style="display:none">
       <div class="card mb4 fx jb ai">
         <div class="fx g3 ai"><span style="font-size:24px" id="eximpicon">📄</span><div><div style="font-weight:600;font-size:12px" id="eximpname"></div><div class="fl" id="eximpsz"></div></div></div>
         <button class="btn bo bs" onclick="resetExImp()">Trocar</button>
       </div>
-      <div id="eximpload" style="display:none;text-align:center;padding:24px"><div class="spin"></div><div style="font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;color:var(--ac);margin-top:10px">LENDO LAUDO...</div></div>
+      <div id="eximpload" style="display:none;text-align:center;padding:24px"><div class="spin"></div><div style="font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;color:var(--ac);margin-top:10px">EXTRAINDO MARCADORES...</div></div>
       <div id="eximpres" style="display:none"></div>
-      <div id="eximperr" style="display:none" class="card"><div style="color:var(--re);font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;margin-bottom:5px">ERRO</div><div id="eximperrmsg" style="font-size:11px;color:var(--mu)"></div></div>
+      <div id="eximperr" style="display:none" class="card">
+        <div style="color:var(--re);font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;margin-bottom:5px">ERRO</div>
+        <div id="eximperrmsg" style="font-size:11px;color:var(--mu);word-break:break-all"></div>
+      </div>
     </div>
   </div>
   <div id="examlist"></div>
@@ -1508,9 +1528,18 @@ function toggleExImp(forceOpen) {
   if (!open) resetExImp();
 }
 
+function setExMode(mode) {
+  var isArq = mode === 'arq';
+  document.getElementById('eximarq').style.display = isArq ? 'block' : 'none';
+  document.getElementById('eximtxt').style.display = isArq ? 'none' : 'block';
+  document.getElementById('exibtnarq').className = 'btn bs ' + (isArq ? 'bp' : 'bo');
+  document.getElementById('exibtnttx').className = 'btn bs ' + (isArq ? 'bo' : 'bp');
+  resetExImp();
+}
+
 function resetExImp() {
   document.getElementById('eximpprev').style.display = 'none';
-  document.getElementById('eximpfile').value = '';
+  var fi = document.getElementById('eximpfile'); if (fi) fi.value = '';
   exImpData = null;
 }
 
@@ -1549,7 +1578,7 @@ async function procExImp(file) {
   document.getElementById('eximpload').style.display = 'block';
   document.getElementById('eximpres').style.display = 'none';
   document.getElementById('eximperr').style.display = 'none';
-  var EPROMPT = 'Leia este laudo de exames laboratoriais e extraia todos os marcadores encontrados. Retorne APENAS JSON válido sem markdown:\n{"data":"AAAA-MM","tipo":"Hemograma + Hormonal","marcadores":[{"nome":"Testosterona Total","valor":"800","unidade":"ng/dL","referencia":"300-1000","status":"normal"}]}\nStatus: "normal", "alto", "baixo", "critico". Inclua TODOS os marcadores presentes no documento.';
+  var EPROMPT = 'Extraia TODOS os marcadores deste laudo. Retorne SOMENTE JSON, sem nenhum texto antes ou depois:\n{"data":"AAAA-MM","tipo":"descreva o tipo","marcadores":[{"nome":"nome do exame","valor":"valor numérico","unidade":"unidade","referencia":"faixa de referência","status":"normal"}]}\nRegras de status: normal=dentro da faixa, alto=acima do limite superior, baixo=abaixo do limite inferior, critico=muito alterado. Inclua TODOS os itens do laudo.';
   try {
     var msgs;
     if (ext === 'pdf') {
@@ -1557,14 +1586,42 @@ async function procExImp(file) {
       msgs = [{role:'user',content:[{type:'document',source:{type:'base64',media_type:'application/pdf',data:b64}},{type:'text',text:EPROMPT}]}];
     } else if (ext === 'txt') {
       var txt = await file.text();
-      msgs = [{role:'user',content:EPROMPT + '\n\nTexto:\n' + txt}];
+      msgs = [{role:'user',content:EPROMPT + '\n\nTexto do laudo:\n' + txt}];
     } else {
       var txt2 = await exDocx(file);
-      msgs = [{role:'user',content:EPROMPT + '\n\nTexto extraído:\n' + txt2}];
+      if (!txt2) throw new Error('Não foi possível extrair texto do arquivo Word.');
+      msgs = [{role:'user',content:EPROMPT + '\n\nTexto do laudo:\n' + txt2}];
     }
-    var res = await apiCall(msgs, 2500);
+    var res = await apiCall(msgs, 4000);
     var p = parseJ(res);
-    if (!p || !p.marcadores || !p.marcadores.length) throw new Error('Não encontrei marcadores no arquivo.');
+    if (!p) throw new Error('IA não retornou JSON válido. Tente copiar o texto do laudo e usar "Colar texto".\n\nResposta recebida: ' + res.substring(0, 200));
+    if (!p.marcadores || !p.marcadores.length) throw new Error('Nenhum marcador encontrado. Verifique se o arquivo contém resultados de exames, ou tente "Colar texto".');
+    exImpData = p;
+    document.getElementById('eximpload').style.display = 'none';
+    renderExImpPrev(p);
+  } catch(e) {
+    document.getElementById('eximpload').style.display = 'none';
+    document.getElementById('eximperr').style.display = 'block';
+    document.getElementById('eximperrmsg').textContent = e.message || 'Erro desconhecido';
+  }
+}
+
+async function procExTxt() {
+  var txt = document.getElementById('extxtarea').value.trim();
+  if (!txt) return toast('Cole o texto do laudo primeiro', 'er');
+  document.getElementById('eximpprev').style.display = 'block';
+  document.getElementById('eximpicon').textContent = '📋';
+  document.getElementById('eximpname').textContent = 'Texto colado';
+  document.getElementById('eximpsz').textContent = txt.length + ' caracteres';
+  document.getElementById('eximpload').style.display = 'block';
+  document.getElementById('eximpres').style.display = 'none';
+  document.getElementById('eximperr').style.display = 'none';
+  var EPROMPT = 'Extraia TODOS os marcadores deste laudo. Retorne SOMENTE JSON, sem nenhum texto antes ou depois:\n{"data":"AAAA-MM","tipo":"descreva o tipo","marcadores":[{"nome":"nome do exame","valor":"valor numérico","unidade":"unidade","referencia":"faixa de referência","status":"normal"}]}\nRegras de status: normal=dentro da faixa, alto=acima do limite superior, baixo=abaixo do limite inferior, critico=muito alterado.';
+  try {
+    var res = await apiCall([{role:'user',content:EPROMPT + '\n\nTexto do laudo:\n' + txt}], 4000);
+    var p = parseJ(res);
+    if (!p) throw new Error('IA não retornou JSON válido.\n\nResposta: ' + res.substring(0, 200));
+    if (!p.marcadores || !p.marcadores.length) throw new Error('Nenhum marcador identificado no texto. Verifique se o texto contém resultados de exames.');
     exImpData = p;
     document.getElementById('eximpload').style.display = 'none';
     renderExImpPrev(p);
