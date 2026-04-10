@@ -1560,28 +1560,52 @@ function buildReport(r, c) {
       '<div style="font-size:9px;color:var(--mu);line-height:1.3">' + (s.label || '') + '</div></div>';
   }).join('');
 
-  // Ajuste bars
-  function ajBar(lbl, atual, ideal, delta, unit, cor) {
+  // Ajuste bars — cor por status: verde=adequado, amarelo=ajustar, vermelho=crítico
+  function ajStatus(atual, ideal, delta) {
+    if (!delta || delta === '' || delta === '0') return 'ok';
+    if (atual != null && ideal) {
+      var pct = Math.abs(atual - ideal) / ideal * 100;
+      if (pct <= 10) return 'ok';
+      if (pct <= 25) return 'warn';
+      return 'crit';
+    }
+    // sem valor atual: usa magnitude do delta para inferir
+    var num = parseFloat((delta || '').replace(/[^0-9.]/g, '')) || 0;
+    var ref = ideal || 1;
+    var pct2 = num / ref * 100;
+    if (pct2 <= 10) return 'ok';
+    if (pct2 <= 25) return 'warn';
+    return 'crit';
+  }
+  var STATUS_CLR  = {ok:'var(--gn)', warn:'#f5c518', crit:'var(--re)'};
+  var STATUS_BG   = {ok:'#001a0a',   warn:'#1a1400',  crit:'#1a0000'};
+  var STATUS_LBL  = {ok:'adequado',  warn:'ajustar',   crit:'crítico'};
+
+  function ajBar(lbl, atual, ideal, delta, unit) {
     if (!ideal) return '';
-    var mx = Math.max(atual || 0, ideal, 1);
-    var pA = Math.round((atual || 0) / mx * 100); var pI = Math.round(ideal / mx * 100);
-    var pos = delta && delta.startsWith('+'); var neg = delta && delta.startsWith('-');
+    var st  = ajStatus(atual, ideal, delta);
+    var clr = STATUS_CLR[st]; var bg = STATUS_BG[st];
+    var mx  = Math.max(atual || 0, ideal, 1);
+    var pA  = Math.round((atual || 0) / mx * 100);
+    var pI  = Math.round(ideal / mx * 100);
     return '<div class="ajr"><div class="ajl"><span>' + lbl + '</span>' +
       '<div class="fx g2 ai">' +
-      (atual ? '<span style="font-family:\'DM Mono\',monospace;font-size:9px;color:var(--mu)">' + atual + unit + '</span>' : '') +
+      (atual != null ? '<span style="font-family:\'DM Mono\',monospace;font-size:9px;color:var(--mu)">' + atual + unit + '</span>' : '') +
       '<span style="font-family:\'DM Mono\',monospace;font-size:9px;color:var(--ac)">→' + ideal + unit + '</span>' +
-      (delta ? '<span style="font-family:\'DM Mono\',monospace;font-size:9px;padding:1px 7px;border-radius:2px;background:' + (pos ? '#001a0a' : neg ? '#1a0000' : 'var(--s2)') + ';color:' + (pos ? 'var(--gn)' : neg ? 'var(--re)' : 'var(--mu)') + '">' + delta + '</span>' : '') +
+      '<span style="font-family:\'DM Mono\',monospace;font-size:9px;padding:1px 8px;border-radius:2px;background:' + bg + ';color:' + clr + ';font-weight:700">' +
+        (delta ? delta + ' ' : '') + STATUS_LBL[st] +
+      '</span>' +
       '</div></div>' +
-      '<div class="ajb"><div class="aj-cur" style="width:' + pA + '%"></div><div class="aj-tgt" style="width:' + pI + '%;background:' + cor + '"></div></div></div>';
+      '<div class="ajb"><div class="aj-cur" style="width:' + pA + '%"></div><div class="aj-tgt" style="width:' + pI + '%;background:' + clr + '"></div></div></div>';
   }
 
   var ajHtml =
-    ajBar('Proteína', aj.proteina_atual_g, aj.proteina_ideal_g, aj.proteina_delta, 'g', 'var(--re)') +
-    ajBar('Carboidratos', aj.carb_atual_g, aj.carb_ideal_g, aj.carb_delta, 'g', '#f5c518') +
-    ajBar('Gorduras', aj.gordura_atual_g, aj.gordura_ideal_g, aj.gordura_delta, 'g', 'var(--pu)') +
-    ajBar('Calorias', aj.kcal_atual, aj.kcal_ideal, aj.kcal_delta, 'kcal', 'var(--gn)') +
-    ajBar('Água', aj.agua_atual_l, aj.agua_ideal_l, aj.agua_delta, 'L', 'var(--bl)') +
-    ajBar('Sono', aj.sono_atual_h, aj.sono_ideal_h, aj.sono_delta, 'h', '#a78bfa');
+    ajBar('Proteína',    aj.proteina_atual_g, aj.proteina_ideal_g, aj.proteina_delta, 'g') +
+    ajBar('Carboidratos',aj.carb_atual_g,     aj.carb_ideal_g,     aj.carb_delta,     'g') +
+    ajBar('Gorduras',    aj.gordura_atual_g,  aj.gordura_ideal_g,  aj.gordura_delta,  'g') +
+    ajBar('Calorias',    aj.kcal_atual,       aj.kcal_ideal,       aj.kcal_delta,     'kcal') +
+    ajBar('Água',        aj.agua_atual_l,     aj.agua_ideal_l,     aj.agua_delta,     'L') +
+    ajBar('Sono',        aj.sono_atual_h,     aj.sono_ideal_h,     aj.sono_delta,     'h');
 
   var alimentos = Array.isArray(r.alimentos) ? r.alimentos.filter(function(a) { return a.nome; }) : [];
   var foodHtml = alimentos.length ? (
@@ -1646,7 +1670,7 @@ function buildReport(r, c) {
     '<div class="srg">' + rings + '</div>' +
 
     '<div class="card mb4"><div style="font-family:\'Bebas Neue\',sans-serif;font-size:17px;letter-spacing:2px;margin-bottom:4px">AJUSTES RECOMENDADOS</div>' +
-    '<div class="fl" style="margin-bottom:12px">Cinza=atual · Colorido=meta · Tag=diferença</div>' + ajHtml + foodHtml +
+    '<div class="fl" style="margin-bottom:12px">🟢 Adequado &nbsp;·&nbsp; 🟡 Precisa ajustar &nbsp;·&nbsp; 🔴 Crítico</div>' + ajHtml + foodHtml +
     '<div style="display:flex;gap:8px;align-items:center;padding:9px;background:var(--s2);border-radius:3px;margin-top:8px">' +
     '<span style="font-size:12px;font-weight:600">Volume de treino:</span>' +
     '<span style="font-family:\'Bebas Neue\',sans-serif;font-size:15px;color:' + volClr + '">' + volIco + ' ' + (aj.treino_volume || 'manter').toUpperCase() + '</span></div>' +
