@@ -1554,8 +1554,13 @@ function loadZip() {
   });
 }
 
+var WORKER_URL = 'WORKER_URL_AQUI'; // substitua pela URL do seu Cloudflare Worker
+
 async function apiCall(messages, maxTok) {
-  var resp = await fetch('https://api.anthropic.com/v1/messages', {
+  if (!WORKER_URL || WORKER_URL === 'WORKER_URL_AQUI') {
+    throw new Error('Configure a URL do Worker em WORKER_URL no topo do script.');
+  }
+  var resp = await fetch(WORKER_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: maxTok || 1000, messages: messages })
