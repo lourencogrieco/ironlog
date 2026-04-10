@@ -1,0 +1,1511 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IRONLOG — Lourenço</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0a0a;--s1:#111;--s2:#1a1a1a;--br:#222;--ac:#e8ff3c;--re:#ff4444;--tx:#f0f0f0;--mu:#555;--gn:#3cffa0;--or:#ff8c42;--bl:#3cc4ff;--pu:#c084fc}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden}
+/* HEADER */
+header{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--br);position:sticky;top:0;background:var(--bg);z-index:100}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:4px;color:var(--ac)}.logo span{color:var(--tx)}
+.hdate{font-family:'DM Mono',monospace;font-size:10px;color:var(--mu);text-transform:uppercase;letter-spacing:1px}
+/* NAV */
+nav{display:flex;gap:2px;padding:10px 20px;border-bottom:1px solid var(--br);overflow-x:auto;scrollbar-width:none}
+nav::-webkit-scrollbar{display:none}
+.nb{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1.2px;text-transform:uppercase;padding:7px 14px;border:1px solid transparent;background:transparent;color:var(--mu);cursor:pointer;border-radius:2px;transition:all .2s;white-space:nowrap}
+.nb.on{background:var(--ac);color:#000;font-weight:700;border-color:var(--ac)}
+.nb:hover:not(.on){border-color:var(--br);color:var(--tx)}
+/* VIEWS */
+.view{display:none;padding:20px;max-width:900px;margin:0 auto}.view.on{display:block}
+.stl{font-family:'Bebas Neue',sans-serif;font-size:34px;letter-spacing:3px;line-height:1;margin-bottom:3px}
+.sub{font-size:12px;color:var(--mu);margin-bottom:22px}
+/* CARDS */
+.card{background:var(--s1);border:1px solid var(--br);border-radius:4px;padding:16px;margin-bottom:10px}
+.cttl{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;margin-bottom:12px}
+/* BADGES */
+.badge{font-family:'DM Mono',monospace;font-size:9px;padding:2px 8px;border-radius:2px;text-transform:uppercase;letter-spacing:1px;font-weight:700}
+.by{background:var(--ac);color:#000}.bgn{background:var(--gn);color:#000}
+.bm{background:var(--s2);color:var(--mu);border:1px solid var(--br)}
+.bbl{border:1px solid var(--bl);color:var(--bl);background:#001520}
+.bpu{border:1px solid var(--pu);color:var(--pu);background:#110018}
+.bor{border:1px solid var(--or);color:var(--or);background:#1a0a00}
+/* GRID / FORM */
+.fg{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:9px;margin-bottom:12px}
+.fg5{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:8px}
+.gc{grid-column:1/-1}
+.fg_{display:flex;flex-direction:column;gap:5px}
+.fl{font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--mu)}
+.fi,.fs{background:var(--bg);border:1px solid var(--br);color:var(--tx);padding:8px 10px;border-radius:2px;font-family:'DM Sans',sans-serif;font-size:13px;width:100%;transition:border-color .2s}
+.fi:focus,.fs:focus{outline:none;border-color:var(--ac)}
+textarea.fi{resize:vertical}.fs option{background:var(--s1)}
+/* BUTTONS */
+.btn{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;padding:7px 14px;border-radius:2px;cursor:pointer;transition:all .2s;border:1px solid transparent;font-weight:500}
+.bp{background:var(--ac);color:#000;border-color:var(--ac)}.bp:hover{background:#cde025}
+.bo{background:transparent;color:var(--tx);border-color:var(--br)}.bo:hover{border-color:#444;background:var(--s2)}
+.bd{background:transparent;color:var(--re);border-color:var(--re)}.bd:hover{background:var(--re);color:#fff}
+.bs{padding:4px 9px;font-size:9px}
+.bi{width:26px;height:26px;padding:0;display:flex;align-items:center;justify-content:center;font-size:12px;background:var(--s1);border-color:var(--br);color:var(--tx)}
+.bi:hover{background:var(--s2);border-color:#444}
+.fw{width:100%}.mt4{margin-top:14px}.mb4{margin-bottom:14px}.mb2{margin-bottom:7px}
+.fx{display:flex}.g2{gap:8px}.g3{gap:12px}.ai{align-items:center}.jb{justify-content:space-between}.wp{flex-wrap:wrap}
+/* STAT GRID */
+.sgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:9px;margin-bottom:14px}
+.sc{background:var(--s1);border:1px solid var(--br);border-radius:4px;padding:14px}
+.sl{font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--mu);margin-bottom:5px}
+.sv{font-family:'Bebas Neue',sans-serif;font-size:30px;letter-spacing:2px;line-height:1;color:var(--ac)}
+.su{font-size:10px;color:var(--mu);margin-top:2px}
+/* EMPTY */
+.emp{text-align:center;padding:44px 16px;color:var(--mu)}
+.ei{font-size:40px;margin-bottom:8px;opacity:.4}.et{font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:1px}
+/* MODALS */
+.mov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:200;align-items:center;justify-content:center;padding:14px}
+.mov.on{display:flex}
+.mo{background:var(--s1);border:1px solid var(--br);border-radius:4px;padding:22px;width:100%;max-width:480px;max-height:86vh;overflow-y:auto}
+.mtl{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:3px;margin-bottom:16px}
+.mac{display:flex;gap:7px;justify-content:flex-end;margin-top:16px}
+/* TOAST */
+.toast{position:fixed;bottom:18px;right:18px;font-family:'DM Mono',monospace;font-size:10px;font-weight:700;letter-spacing:1px;padding:9px 16px;border-radius:2px;z-index:300;transform:translateY(50px);opacity:0;transition:all .3s;text-transform:uppercase}
+.toast.on{transform:translateY(0);opacity:1}.toast.ok{background:var(--gn);color:#000}.toast.er{background:var(--re);color:#fff}
+/* EXERCÍCIO ROW */
+.exr{background:var(--s2);border:1px solid var(--br);border-radius:3px;padding:10px 12px;display:grid;grid-template-columns:1fr auto;gap:9px;align-items:center;margin-bottom:5px}
+.en{font-weight:600;font-size:12px;margin-bottom:2px}.ec{font-family:'DM Mono',monospace;font-size:9px;color:var(--mu)}
+/* SETS TABLE */
+.stbl{width:100%;border-collapse:collapse}
+.stbl th{font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--mu);padding:4px 6px;text-align:left;border-bottom:1px solid var(--br)}
+.stbl td{padding:5px 6px}
+.sin{background:var(--bg);border:1px solid var(--br);color:var(--tx);padding:4px 7px;border-radius:2px;font-family:'DM Mono',monospace;font-size:11px;width:66px;text-align:center}
+.sin:focus{outline:none;border-color:var(--ac)}
+.sdk{width:24px;height:24px;border-radius:2px;border:1px solid var(--br);background:var(--s2);cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.sdk.dn{background:var(--gn);border-color:var(--gn);color:#000}
+/* SPINNER */
+.spin{width:34px;height:34px;border:3px solid var(--br);border-top-color:var(--ac);border-radius:50%;animation:sp .7s linear infinite;margin:0 auto}
+@keyframes sp{to{transform:rotate(360deg)}}
+/* CHART */
+.cbrs{display:flex;align-items:flex-end;height:110px;gap:3px;margin-top:7px}
+.cw{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;height:100%;justify-content:flex-end}
+.cb{width:100%;border-radius:2px 2px 0 0;background:var(--br);min-height:4px;cursor:pointer}
+.cbh{background:var(--ac)}.cbm{background:var(--gn)}
+.clb{font-family:'DM Mono',monospace;font-size:8px;color:var(--mu);text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
+/* HISTORY */
+.hi{background:var(--s1);border:1px solid var(--br);border-radius:4px;margin-bottom:7px;overflow:hidden}
+.hihd{padding:10px 14px;display:flex;justify-content:space-between;align-items:center;cursor:pointer}
+.hihd:hover{background:var(--s2)}
+.hibd{display:none;padding:0 14px 10px}.hibd.on{display:block}
+.hex{padding:7px 0;border-bottom:1px solid var(--br)}.hex:last-child{border-bottom:none}
+.hch{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
+.chip{font-family:'DM Mono',monospace;font-size:9px;padding:2px 7px;background:var(--bg);border:1px solid var(--br);border-radius:2px;color:var(--mu)}
+.chip.pr{border-color:var(--ac);color:var(--ac)}
+/* IMPORT */
+.dz{border:2px dashed var(--br)!important;cursor:pointer;transition:border-color .2s,background .2s}
+.dz.ov{border-color:var(--ac)!important;background:#181e00!important}
+.ir{display:grid;grid-template-columns:1fr 50px 68px 68px 68px;gap:5px;align-items:center;padding:6px 0;border-bottom:1px solid var(--br);font-size:11px}
+.ir:last-child{border-bottom:none}
+.ih{display:grid;grid-template-columns:1fr 50px 68px 68px 68px;gap:5px;font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--mu);padding-bottom:5px;border-bottom:1px solid var(--br);margin-bottom:4px}
+.ir input{background:var(--bg);border:1px solid var(--br);color:var(--tx);padding:3px 6px;border-radius:2px;font-size:10px;width:100%;text-align:center}
+.ir input:first-child{text-align:left}
+/* DIETA */
+.rc{background:var(--s2);border:1px solid var(--br);border-radius:3px;padding:10px 12px;margin-bottom:6px}
+.rh{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
+/* MEDS */
+.mdc{background:var(--s1);border:1px solid var(--br);border-radius:4px;padding:10px 12px;margin-bottom:7px;display:flex;justify-content:space-between;align-items:flex-start;gap:9px}
+.mcat{font-family:'DM Mono',monospace;font-size:9px;padding:2px 7px;border-radius:2px;text-transform:uppercase;letter-spacing:1px;font-weight:700}
+.ch{background:#3a1a00;color:var(--or);border:1px solid var(--or)}.cp{background:#001a2a;color:var(--bl);border:1px solid var(--bl)}
+.cs{background:#001a0a;color:var(--gn);border:1px solid var(--gn)}.cm{background:#1a001a;color:var(--pu);border:1px solid var(--pu)}
+.csa{background:#1a0000;color:var(--re);border:1px solid var(--re)}.co{background:var(--s2);color:var(--mu);border:1px solid var(--br)}
+/* CORPO SEGMENTAR */
+.sg5{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin-top:10px;text-align:center}
+.sgc{background:var(--s1);border:1px solid var(--br);border-radius:4px;padding:8px 5px}
+/* CARDIO BANNER */
+.cbn{background:#050e15;border:1px solid var(--bl);border-radius:4px;padding:10px 14px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:7px}
+/* ANÁLISE VISUAL */
+.disc{background:#0d0d0d;border:1px solid #2a2a2a;border-left:3px solid var(--or);border-radius:4px;padding:12px 15px;margin-top:16px;font-size:11px;color:var(--mu);line-height:1.8}
+.ajr{margin-bottom:12px}
+.ajl{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;font-size:12px;font-weight:600}
+.ajb{position:relative;height:7px;background:var(--br);border-radius:4px;overflow:visible}
+.aj-cur{position:absolute;height:100%;border-radius:4px;background:var(--mu);opacity:.4}
+.aj-tgt{position:absolute;height:100%;border-radius:4px;opacity:.85}
+/* SCORE RINGS */
+.srg{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px;margin-bottom:20px}
+.src{border-radius:6px;padding:13px 10px;text-align:center}
+/* CHECKLIST */
+.chk{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--br);font-size:12px}
+.chk:last-child{border-bottom:none}
+.dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+/* RESPONSIVO */
+@media(max-width:540px){.fg{grid-template-columns:1fr 1fr}.sgrid{grid-template-columns:1fr 1fr}.stl{font-size:26px}.ir,.ih{grid-template-columns:1fr 40px 55px 55px 55px;font-size:10px}.fg5{grid-template-columns:repeat(5,1fr)}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">IRON<span>LOG</span></div>
+  <div class="hdate" id="hdate"></div>
+</header>
+
+<nav id="nav">
+  <button class="nb on" data-v="treinos">🏋️ Treinos</button>
+  <button class="nb" data-v="importar">⬆ Importar</button>
+  <button class="nb" data-v="registrar">▶ Registrar</button>
+  <button class="nb" data-v="progresso">📈 Progresso</button>
+  <button class="nb" data-v="historico">📋 Histórico</button>
+  <button class="nb" data-v="dieta">🥗 Dieta</button>
+  <button class="nb" data-v="corpo">⚖️ Corpo</button>
+  <button class="nb" data-v="meds">💊 Medicamentos</button>
+  <button class="nb" data-v="analise">🎯 Análise IA</button>
+</nav>
+
+<!-- ======= TREINOS ======= -->
+<div id="view-treinos" class="view on">
+  <div class="stl">MEUS TREINOS</div>
+  <div class="sub">Configure seus dias e exercícios</div>
+  <div class="fx g2 mb4 wp">
+    <button class="btn bp" onclick="openM('m-day')">+ Novo Dia</button>
+    <button class="btn bo" onclick="openCardioModal()">🏃 Cardio</button>
+  </div>
+  <div id="cbanner"></div>
+  <div id="daylist"></div>
+</div>
+
+<!-- ======= IMPORTAR ======= -->
+<div id="view-importar" class="view">
+  <div class="stl">IMPORTAR TREINO</div>
+  <div class="sub">PDF ou Word — a IA lê e cadastra automaticamente</div>
+  <div class="card dz" id="dz">
+    <div style="text-align:center;padding:24px 10px">
+      <div style="font-size:42px;margin-bottom:8px;opacity:.5">📄</div>
+      <div class="cttl">Arraste ou clique</div>
+      <div style="font-size:11px;color:var(--mu);margin-bottom:14px">PDF, Word (.docx) ou TXT</div>
+      <span class="btn bp">Escolher arquivo</span>
+      <input type="file" id="impfile" accept=".pdf,.docx,.txt" style="display:none">
+    </div>
+  </div>
+  <div id="impprev" style="display:none">
+    <div class="card mb4 fx jb ai">
+      <div class="fx g3 ai"><span style="font-size:26px" id="impicon">📄</span><div><div style="font-weight:600;font-size:12px" id="impname"></div><div class="fl" id="impsz"></div></div></div>
+      <button class="btn bo bs" onclick="resetImp()">Trocar</button>
+    </div>
+    <div id="impload" style="display:none;text-align:center;padding:24px"><div class="spin"></div><div style="font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;color:var(--ac);margin-top:10px">LENDO...</div></div>
+    <div id="impres" style="display:none"></div>
+    <div id="imperr" style="display:none" class="card"><div style="color:var(--re);font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;margin-bottom:5px">ERRO</div><div id="impermsg" style="font-size:11px;color:var(--mu)"></div></div>
+  </div>
+</div>
+
+<!-- ======= REGISTRAR ======= -->
+<div id="view-registrar" class="view">
+  <div class="stl">REGISTRAR TREINO</div>
+  <div class="sub">Anote as cargas de hoje</div>
+  <div class="card mb4">
+    <div class="fg">
+      <div class="fg_"><label class="fl">Dia de treino</label><select class="fs" id="logday"></select></div>
+      <div class="fg_"><label class="fl">Data</label><input type="date" class="fi" id="logdate"></div>
+    </div>
+    <button class="btn bp" onclick="startLog()">▶ Iniciar Sessão</button>
+  </div>
+  <div id="logsess" style="display:none">
+    <div id="logexs"></div>
+    <button class="btn bp fw mt4" onclick="saveLog()">✓ SALVAR SESSÃO</button>
+  </div>
+</div>
+
+<!-- ======= PROGRESSO ======= -->
+<div id="view-progresso" class="view">
+  <div class="stl">PROGRESSÃO</div>
+  <div class="sub">Evolução de carga por exercício</div>
+  <div class="sgrid" id="pgstats"></div>
+  <div class="fg_ mb4" style="max-width:280px"><label class="fl">Exercício</label><select class="fs" id="pgsel" onchange="renderChart()"></select></div>
+  <div id="pgchart"></div>
+</div>
+
+<!-- ======= HISTÓRICO ======= -->
+<div id="view-historico" class="view">
+  <div class="stl">HISTÓRICO</div>
+  <div class="sub">Todos os treinos registrados</div>
+  <div id="histlist"></div>
+</div>
+
+<!-- ======= DIETA ======= -->
+<div id="view-dieta" class="view">
+  <div class="stl">DIETA</div>
+  <div class="sub">Cadastre refeições ou analise com IA</div>
+  <div class="fx g2 mb4 wp">
+    <button class="btn bp" id="bdm" onclick="setDietMode('manual')">✏️ Manual</button>
+    <button class="btn bo" id="bdia" onclick="setDietMode('ia')">🤖 Analisar com IA</button>
+  </div>
+  <div id="dietman">
+    <div class="card"><div class="fx jb ai mb4"><div class="cttl" style="margin-bottom:0">REFEIÇÕES</div><button class="btn bp bs" onclick="openM('m-ref')">+ Refeição</button></div><div id="reflist"><div style="font-size:12px;color:var(--mu)">Nenhuma refeição ainda.</div></div></div>
+    <div id="macman" style="display:none;margin-top:10px"><div class="stl" style="font-size:20px;margin-bottom:8px">ESTIMATIVA</div><div class="sgrid" id="macgrid"></div></div>
+    <button class="btn bp fw mt4" onclick="calcMacros()">📊 Calcular Macros</button>
+  </div>
+  <div id="dietia" style="display:none">
+    <div class="card dz mb4" onclick="document.getElementById('dietfile').click()"><div style="text-align:center;padding:18px 10px"><div style="font-size:32px;margin-bottom:7px;opacity:.5">📄</div><div style="font-weight:600;margin-bottom:5px;font-size:13px">Envie PDF ou Word da dieta</div><div style="font-size:11px;color:var(--mu);margin-bottom:10px">Ou cole o texto abaixo</div><span class="btn bp bs">Escolher arquivo</span><input type="file" id="dietfile" accept=".pdf,.docx,.txt" style="display:none" onchange="handleDietFile(this)"></div></div>
+    <div class="fg_ mb4"><label class="fl">Cole ou escreva a dieta aqui</label><textarea class="fi" id="diettxt" rows="8" placeholder="Café da manhã: 3 ovos, 100g aveia...&#10;Almoço: 150g frango, 100g arroz..."></textarea></div>
+    <button class="btn bp fw" onclick="analiseDieta()">🤖 Analisar com IA</button>
+    <div id="diaload" style="display:none;text-align:center;padding:24px"><div class="spin"></div><div style="font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;color:var(--ac);margin-top:10px">ANALISANDO...</div></div>
+    <div id="diares" style="display:none;margin-top:10px"></div>
+  </div>
+</div>
+
+<!-- ======= CORPO ======= -->
+<div id="view-corpo" class="view">
+  <div class="stl">CORPO & OBJETIVO</div>
+  <div class="sub">Bioimpedância, medidas e meta do período</div>
+
+  <div class="card mb4" style="border-color:#152215">
+    <div class="fx jb ai wp g2 mb4">
+      <div><div class="cttl" style="margin-bottom:1px;color:var(--gn)">📊 IMPORTAR BIOIMPEDÂNCIA</div><div style="font-size:11px;color:var(--mu)">InBody, Tanita, Dexa — qualquer laudo em PDF</div></div>
+      <label class="btn bp bs" style="cursor:pointer">⬆ Subir PDF<input type="file" id="biofile" accept=".pdf" style="display:none" onchange="handleBioFile(this)"></label>
+    </div>
+    <div id="bioload" style="display:none;text-align:center;padding:18px"><div class="spin"></div><div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--ac);margin-top:7px;text-transform:uppercase;letter-spacing:1px">Lendo laudo...</div></div>
+    <div id="biores" style="display:none"></div>
+    <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--mu);line-height:1.7">Extrai: peso, % gordura, massa muscular, água, TMB, gordura visceral, segmentar e mais</div>
+  </div>
+
+  <div class="card mb4">
+    <div class="cttl" style="color:var(--ac)">DADOS PESSOAIS</div>
+    <div class="fg">
+      <div class="fg_"><label class="fl">Nome</label><input type="text" class="fi" id="cn" placeholder="Ex: Lourenço"></div>
+      <div class="fg_"><label class="fl">Data avaliação</label><input type="date" class="fi" id="cdt"></div>
+      <div class="fg_"><label class="fl">Peso (kg)</label><input type="number" class="fi" id="cpeso" step="0.1" placeholder="70.3"></div>
+      <div class="fg_"><label class="fl">Altura (cm)</label><input type="number" class="fi" id="calt" placeholder="172"></div>
+      <div class="fg_"><label class="fl">Idade</label><input type="number" class="fi" id="cid" placeholder="31"></div>
+      <div class="fg_"><label class="fl">Sexo</label><select class="fs" id="csex"><option value="M">Masculino</option><option value="F">Feminino</option></select></div>
+    </div>
+  </div>
+
+  <div class="card mb4">
+    <div class="cttl" style="color:var(--ac)">COMPOSIÇÃO CORPORAL (InBody)</div>
+    <div class="fg">
+      <div class="fg_"><label class="fl">% Gordura (PGC)</label><input type="number" class="fi" id="cpgc" step="0.1" placeholder="6.6"></div>
+      <div class="fg_"><label class="fl">Massa gordura (kg)</label><input type="number" class="fi" id="cmg" step="0.1" placeholder="4.6"></div>
+      <div class="fg_"><label class="fl">Massa musc. esq. (kg)</label><input type="number" class="fi" id="cmm" step="0.1" placeholder="37.8"></div>
+      <div class="fg_"><label class="fl">Massa magra (kg)</label><input type="number" class="fi" id="cma" step="0.1" placeholder="65.7"></div>
+      <div class="fg_"><label class="fl">Água corporal (L)</label><input type="number" class="fi" id="cabio" step="0.1" placeholder="48.2"></div>
+      <div class="fg_"><label class="fl">Proteína (kg)</label><input type="number" class="fi" id="cprt" step="0.1" placeholder="13.2"></div>
+      <div class="fg_"><label class="fl">Minerais (kg)</label><input type="number" class="fi" id="cmin" step="0.1" placeholder="4.2"></div>
+      <div class="fg_"><label class="fl">IMC (kg/m²)</label><input type="number" class="fi" id="cimc" step="0.1" placeholder="23.8"></div>
+    </div>
+  </div>
+
+  <div class="card mb4">
+    <div class="cttl" style="color:var(--ac)">DADOS ADICIONAIS</div>
+    <div class="fg">
+      <div class="fg_"><label class="fl">TMB (kcal)</label><input type="number" class="fi" id="ctmb" placeholder="1788"></div>
+      <div class="fg_"><label class="fl">Gordura visceral (nível)</label><input type="number" class="fi" id="cvisc" step="0.1" placeholder="1"></div>
+      <div class="fg_"><label class="fl">Rel. cintura-quadril</label><input type="number" class="fi" id="crcq" step="0.01" placeholder="0.88"></div>
+      <div class="fg_"><label class="fl">Grau obesidade (%)</label><input type="number" class="fi" id="cgob" step="0.1" placeholder="108"></div>
+      <div class="fg_"><label class="fl">Score InBody</label><input type="number" class="fi" id="cscore" placeholder="90"></div>
+      <div class="fg_"><label class="fl">Peso ideal (kg)</label><input type="number" class="fi" id="cpid" step="0.1" placeholder="70.3"></div>
+    </div>
+    <div class="fl mb2" style="margin-top:12px">Massa magra segmentar (kg)</div>
+    <div class="fg5">
+      <div class="fg_"><label class="fl">Braço D</label><input type="number" class="fi" id="smbd" step="0.01" placeholder="3.99"></div>
+      <div class="fg_"><label class="fl">Braço E</label><input type="number" class="fi" id="smbe" step="0.01" placeholder="4.16"></div>
+      <div class="fg_"><label class="fl">Tronco</label><input type="number" class="fi" id="smtr" step="0.01" placeholder="30.21"></div>
+      <div class="fg_"><label class="fl">Perna D</label><input type="number" class="fi" id="smpd" step="0.01" placeholder="9.85"></div>
+      <div class="fg_"><label class="fl">Perna E</label><input type="number" class="fi" id="smpe" step="0.01" placeholder="9.61"></div>
+    </div>
+    <div class="fl mb2" style="margin-top:8px">Gordura segmentar (kg)</div>
+    <div class="fg5">
+      <div class="fg_"><label class="fl">Braço D</label><input type="number" class="fi" id="sgbd" step="0.01" placeholder="0.10"></div>
+      <div class="fg_"><label class="fl">Braço E</label><input type="number" class="fi" id="sgbe" step="0.01" placeholder="0.10"></div>
+      <div class="fg_"><label class="fl">Tronco</label><input type="number" class="fi" id="sgtr" step="0.01" placeholder="1.60"></div>
+      <div class="fg_"><label class="fl">Perna D</label><input type="number" class="fi" id="sgpd" step="0.01" placeholder="0.90"></div>
+      <div class="fg_"><label class="fl">Perna E</label><input type="number" class="fi" id="sgpe" step="0.01" placeholder="0.80"></div>
+    </div>
+  </div>
+
+  <div class="card mb4">
+    <div class="cttl" style="color:var(--ac)">OBJETIVO & HÁBITOS DIÁRIOS</div>
+    <div class="fg">
+      <div class="fg_ gc"><label class="fl">Meta principal</label>
+        <select class="fs" id="cobj">
+          <option value="">Selecione...</option>
+          <option value="ganho_massa">💪 Ganho de massa muscular</option>
+          <option value="cutting">🔥 Cutting (perda de gordura)</option>
+          <option value="recomposicao">⚖️ Recomposição corporal</option>
+          <option value="manutencao">🛡️ Manutenção</option>
+          <option value="forca">🏋️ Ganho de força</option>
+          <option value="definicao">✂️ Definição muscular</option>
+        </select>
+      </div>
+      <div class="fg_"><label class="fl">Nível de atividade</label>
+        <select class="fs" id="cativ">
+          <option value="sedentario">Sedentário</option>
+          <option value="leve">Leve (1-2x/sem)</option>
+          <option value="moderado" selected>Moderado (3-4x/sem)</option>
+          <option value="ativo">Muito ativo (5-6x/sem)</option>
+          <option value="atleta">Atleta (2x/dia)</option>
+        </select>
+      </div>
+      <div class="fg_"><label class="fl">Período (semanas)</label><input type="number" class="fi" id="cper" placeholder="8" min="1"></div>
+      <div class="fg_"><label class="fl">💧 Água consumida (L/dia)</label><input type="number" class="fi" id="cagd" step="0.1" placeholder="2.5"></div>
+      <div class="fg_"><label class="fl">😴 Sono (h/noite)</label><input type="number" class="fi" id="csono" step="0.5" placeholder="7.5"></div>
+      <div class="fg_"><label class="fl">Qualidade sono</label>
+        <select class="fs" id="csonq">
+          <option value="">Selecione...</option>
+          <option value="ruim">😔 Ruim</option>
+          <option value="regular">😐 Regular</option>
+          <option value="boa">😊 Boa</option>
+          <option value="otima">😴 Ótima</option>
+        </select>
+      </div>
+      <div class="fg_ gc"><label class="fl">Observações</label><textarea class="fi" id="cobs" rows="2" placeholder="Ex: retorno pós lesão, preparação competição..."></textarea></div>
+    </div>
+    <button class="btn bp fw mt4" onclick="saveCorpo()">✓ SALVAR DADOS</button>
+  </div>
+
+  <div id="corpopanel" style="display:none">
+    <div class="stl" style="font-size:20px;margin-bottom:8px">PAINEL CORPORAL</div>
+    <div class="sgrid" id="cstats"></div>
+    <div id="segpanel" style="display:none;margin-top:10px"></div>
+  </div>
+</div>
+
+<!-- ======= MEDICAMENTOS ======= -->
+<div id="view-meds" class="view">
+  <div class="stl">MEDICAMENTOS</div>
+  <div class="sub">Hormônios, peptídeos, suplementos e medicamentos</div>
+  <div class="fx g2 mb4"><button class="btn bp" onclick="openM('m-med')">+ Adicionar</button></div>
+  <div id="medlist"><div class="emp"><div class="ei">💊</div><div class="et">Nenhum cadastrado</div></div></div>
+  <div class="card mt4" style="border-color:#1a1500;background:#0d0c00">
+    <div class="fl" style="color:var(--or);margin-bottom:6px">⚠️ Aviso importante</div>
+    <div style="font-size:11px;color:var(--mu);line-height:1.7">Informações usadas apenas para análise interna. O uso de hormônios e medicamentos deve ser acompanhado por <strong style="color:var(--tx)">médico especialista</strong>. Este app não substitui orientação profissional.</div>
+  </div>
+</div>
+
+<!-- ======= ANÁLISE IA ======= -->
+<div id="view-analise" class="view">
+  <div class="stl">ANÁLISE IA</div>
+  <div class="sub">Relatório visual consolidado: treino × dieta × corpo × medicamentos</div>
+  <div id="anform">
+    <div class="card mb4" style="border-color:#1a2200;background:#0a1000">
+      <div class="fl" style="color:var(--gn);margin-bottom:7px">🤖 O que será analisado</div>
+      <div style="font-size:12px;color:var(--mu);line-height:1.8">Treino, dieta, bioimpedância, sono, água, cardio e medicamentos — cruzados com seu objetivo para gerar scores, gráficos de ajuste e dicas práticas com valores específicos.</div>
+    </div>
+    <div id="anchk" class="mb4"></div>
+    <button class="btn bp fw" style="padding:12px;font-size:11px" onclick="gerarAnalise()">🎯 GERAR ANÁLISE COMPLETA</button>
+  </div>
+  <div id="anload" style="display:none;text-align:center;padding:44px 16px"><div class="spin"></div><div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:3px;color:var(--ac);margin-top:12px">ANALISANDO...</div><div style="font-size:10px;color:var(--mu);margin-top:3px">Cruzando todos os seus dados</div></div>
+  <div id="anres" style="display:none"></div>
+</div>
+
+<!-- ===== MODAIS ===== -->
+<div class="mov" id="m-day">
+  <div class="mo">
+    <div class="mtl">NOVO DIA DE TREINO</div>
+    <div class="fg">
+      <div class="fg_ gc"><label class="fl">Nome do dia</label><input type="text" class="fi" id="mdname" placeholder="Ex: Peito e Costas, Perna A..."></div>
+      <div class="fg_ gc"><label class="fl">Grupos musculares</label><input type="text" class="fi" id="mdmusc" placeholder="Ex: Peito, Tríceps, Ombro"></div>
+    </div>
+    <div class="mac"><button class="btn bo" onclick="closeM('m-day')">Cancelar</button><button class="btn bp" onclick="saveDay()">Salvar</button></div>
+  </div>
+</div>
+
+<div class="mov" id="m-ex">
+  <div class="mo">
+    <div class="mtl">ADICIONAR EXERCÍCIO</div>
+    <input type="hidden" id="mexdid">
+    <div class="fg">
+      <div class="fg_ gc"><label class="fl">Nome do exercício</label><input type="text" class="fi" id="mexname" placeholder="Ex: Supino Reto com Barra"></div>
+      <div class="fg_"><label class="fl">Séries</label><input type="number" class="fi" id="mexsets" value="3" min="1" max="20"></div>
+      <div class="fg_"><label class="fl">Reps alvo</label><input type="text" class="fi" id="mexreps" placeholder="Ex: 10-12"></div>
+      <div class="fg_"><label class="fl">Carga (kg)</label><input type="number" class="fi" id="mexw" value="0" step="0.5"></div>
+      <div class="fg_"><label class="fl">Descanso (seg)</label><input type="number" class="fi" id="mexrest" value="90"></div>
+    </div>
+    <div class="mac"><button class="btn bo" onclick="closeM('m-ex')">Cancelar</button><button class="btn bp" onclick="saveExercise()">Adicionar</button></div>
+  </div>
+</div>
+
+<div class="mov" id="m-ref">
+  <div class="mo">
+    <div class="mtl">NOVA REFEIÇÃO</div>
+    <div class="fg">
+      <div class="fg_ gc"><label class="fl">Nome da refeição</label><input type="text" class="fi" id="mrnom" placeholder="Ex: Café da manhã, Pré-treino..."></div>
+      <div class="fg_"><label class="fl">Horário</label><input type="time" class="fi" id="mrhor"></div>
+      <div class="fg_ gc"><label class="fl">Alimentos (um por linha)</label><textarea class="fi" id="mrali" rows="5" placeholder="3 ovos inteiros&#10;100g arroz&#10;150g frango grelhado"></textarea></div>
+    </div>
+    <div class="mac"><button class="btn bo" onclick="closeM('m-ref')">Cancelar</button><button class="btn bp" onclick="saveRef()">Adicionar</button></div>
+  </div>
+</div>
+
+<div class="mov" id="m-med">
+  <div class="mo">
+    <div class="mtl">ADICIONAR MEDICAMENTO</div>
+    <div class="fg">
+      <div class="fg_ gc"><label class="fl">Nome / Substância</label><input type="text" class="fi" id="mmnom" placeholder="Ex: Testosterona, BPC-157, Creatina..."></div>
+      <div class="fg_"><label class="fl">Categoria</label>
+        <select class="fs" id="mmcat">
+          <option value="hormonio">Hormônio</option><option value="peptideo">Peptídeo</option>
+          <option value="suplemento">Suplemento</option><option value="medicamento">Medicamento</option>
+          <option value="sarm">SARM</option><option value="outro">Outro</option>
+        </select>
+      </div>
+      <div class="fg_"><label class="fl">Dose</label><input type="text" class="fi" id="mmdose" placeholder="Ex: 250mg, 5g"></div>
+      <div class="fg_"><label class="fl">Frequência</label><input type="text" class="fi" id="mmfreq" placeholder="Ex: 2x/semana, diário"></div>
+      <div class="fg_"><label class="fl">Via</label>
+        <select class="fs" id="mmvia">
+          <option value="oral">Oral</option><option value="injetavel">Injetável IM</option>
+          <option value="subcutaneo">Subcutâneo</option><option value="topico">Tópico</option>
+          <option value="sublingual">Sublingual</option><option value="outro">Outro</option>
+        </select>
+      </div>
+      <div class="fg_"><label class="fl">Início</label><input type="text" class="fi" id="mminicio" placeholder="Ex: Semana 1"></div>
+      <div class="fg_ gc"><label class="fl">Objetivo / obs.</label><textarea class="fi" id="mmobs" rows="2"></textarea></div>
+    </div>
+    <div class="mac"><button class="btn bo" onclick="closeM('m-med')">Cancelar</button><button class="btn bp" onclick="saveMed()">Adicionar</button></div>
+  </div>
+</div>
+
+<div class="mov" id="m-cardio">
+  <div class="mo">
+    <div class="mtl">🏃 CARDIO</div>
+    <div class="fg_ mb4">
+      <label class="fl">Faz cardio?</label>
+      <select class="fs" id="mcfaz" onchange="document.getElementById('mcfields').style.display=this.value!=='nao'?'block':'none'">
+        <option value="nao">Não pratico cardio</option>
+        <option value="sim">Sim, regularmente</option>
+        <option value="eventual">Eventual / esporádico</option>
+      </select>
+    </div>
+    <div id="mcfields" style="display:none">
+      <div class="fg">
+        <div class="fg_"><label class="fl">Tipo</label>
+          <select class="fs" id="mctipo">
+            <option value="caminhada">🚶 Caminhada</option><option value="corrida">🏃 Corrida</option>
+            <option value="bike">🚴 Bike/Spinning</option><option value="eliptico">Elíptico</option>
+            <option value="hiit">⚡ HIIT</option><option value="natacao">🏊 Natação</option>
+            <option value="jump">🦘 Jump</option><option value="esteira">Esteira inclinada</option>
+            <option value="remo">🚣 Remo</option><option value="outro">Outro</option>
+          </select>
+        </div>
+        <div class="fg_"><label class="fl">Intensidade</label>
+          <select class="fs" id="mcint">
+            <option value="leve">Leve</option><option value="moderada">Moderada</option>
+            <option value="intensa">Intensa</option><option value="maxima">Máxima (HIIT)</option>
+          </select>
+        </div>
+        <div class="fg_"><label class="fl">Duração (min/sessão)</label><input type="number" class="fi" id="mcdur" placeholder="30" min="5"></div>
+        <div class="fg_"><label class="fl">Frequência (x/semana)</label><input type="number" class="fi" id="mcfreq" placeholder="3" min="1"></div>
+        <div class="fg_ gc"><label class="fl">Momento</label>
+          <select class="fs" id="mcmom">
+            <option value="pre">Pré-treino</option><option value="pos">Pós-treino</option>
+            <option value="separado">Horário separado</option><option value="jejum">Em jejum</option>
+            <option value="folga">Dias de folga</option>
+          </select>
+        </div>
+        <div class="fg_ gc"><label class="fl">Objetivo do cardio</label><input type="text" class="fi" id="mcobj" placeholder="Ex: queima de gordura, condicionamento..."></div>
+      </div>
+    </div>
+    <div class="mac"><button class="btn bo" onclick="closeM('m-cardio')">Cancelar</button><button class="btn bp" onclick="saveCardio()">Salvar</button></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================================
+// STATE
+// ============================================================
+var S = JSON.parse(localStorage.getItem('il') || 'null') || {
+  days:[], logs:[], ndi:1, nei:1,
+  dieta:null, corpo:null, meds:[], cardio:null
+};
+if (!S.meds) S.meds = [];
+if (!S.cardio) S.cardio = null;
+function sv() { localStorage.setItem('il', JSON.stringify(S)); }
+
+// ============================================================
+// NAV
+// ============================================================
+document.getElementById('nav').addEventListener('click', function(e) {
+  var b = e.target.closest('.nb');
+  if (!b) return;
+  var v = b.dataset.v;
+  document.querySelectorAll('.nb').forEach(function(x) { x.classList.toggle('on', x.dataset.v === v); });
+  document.querySelectorAll('.view').forEach(function(x) { x.classList.toggle('on', x.id === 'view-' + v); });
+  if (v === 'treinos')    { renderDays(); renderCBanner(); }
+  if (v === 'registrar')  renderLogView();
+  if (v === 'progresso')  renderProgress();
+  if (v === 'historico')  renderHistory();
+  if (v === 'dieta')      renderRefs();
+  if (v === 'corpo')      loadCorpoForm();
+  if (v === 'meds')       renderMeds();
+  if (v === 'analise')    renderAnChk();
+});
+
+function goView(v) {
+  document.querySelectorAll('.nb').forEach(function(x) { x.classList.toggle('on', x.dataset.v === v); });
+  document.querySelectorAll('.view').forEach(function(x) { x.classList.toggle('on', x.id === 'view-' + v); });
+}
+
+// ============================================================
+// MODAL / TOAST
+// ============================================================
+function openM(id) { document.getElementById(id).classList.add('on'); }
+function closeM(id) { document.getElementById(id).classList.remove('on'); }
+document.querySelectorAll('.mov').forEach(function(m) {
+  m.addEventListener('click', function(e) { if (e.target === m) m.classList.remove('on'); });
+});
+
+function toast(msg, t) {
+  var el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast ' + (t === 'er' ? 'er' : 'ok') + ' on';
+  setTimeout(function() { el.classList.remove('on'); }, 2400);
+}
+
+// ============================================================
+// DATE INIT
+// ============================================================
+(function() {
+  var d = new Date();
+  document.getElementById('hdate').textContent = d.toLocaleDateString('pt-BR', {weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  document.getElementById('logdate').value = d.toISOString().split('T')[0];
+})();
+
+// ============================================================
+// TREINOS
+// ============================================================
+function saveDay() {
+  var n = document.getElementById('mdname').value.trim();
+  if (!n) return toast('Digite o nome', 'er');
+  S.days.push({ id: S.ndi++, name: n, muscles: document.getElementById('mdmusc').value.trim(), exercises: [] });
+  sv(); closeM('m-day');
+  document.getElementById('mdname').value = ''; document.getElementById('mdmusc').value = '';
+  renderDays(); toast('Dia criado!');
+}
+
+function deleteDay(id) {
+  if (!confirm('Excluir este dia?')) return;
+  S.days = S.days.filter(function(d) { return d.id !== id; });
+  sv(); renderDays(); toast('Removido');
+}
+
+function renderDays() {
+  var el = document.getElementById('daylist');
+  if (!S.days.length) { el.innerHTML = '<div class="emp"><div class="ei">🏋️</div><div class="et">Nenhum dia cadastrado</div></div>'; return; }
+  el.innerHTML = S.days.map(function(d) {
+    var exs = d.exercises.length
+      ? d.exercises.map(function(ex) {
+          return '<div class="exr"><div><div class="en">' + ex.name + '</div><div class="ec">' + ex.sets + '× ' + ex.reps + ' · ' + ex.weight + 'kg · ' + ex.rest + 's</div></div>' +
+            '<button class="btn bi bs" style="color:var(--re);border-color:transparent" onclick="delEx(' + d.id + ',' + ex.id + ')">✕</button></div>';
+        }).join('')
+      : '<div style="font-size:11px;color:var(--mu);padding:4px 0">Sem exercícios — clique em + para adicionar</div>';
+    return '<div class="card"><div class="fx jb ai mb4 wp g2"><div><div class="cttl" style="margin-bottom:1px">' + d.name + '</div>' +
+      (d.muscles ? '<div style="font-size:10px;color:var(--mu)">' + d.muscles + '</div>' : '') + '</div>' +
+      '<div class="fx g2 ai"><span class="badge bm">' + d.exercises.length + ' exerc.</span>' +
+      '<button class="btn bi bs" onclick="openAddEx(' + d.id + ')">+</button>' +
+      '<button class="btn bi bs" style="color:var(--re);border-color:var(--re)" onclick="deleteDay(' + d.id + ')">✕</button></div></div>' +
+      '<div>' + exs + '</div></div>';
+  }).join('');
+}
+
+function openAddEx(did) {
+  document.getElementById('mexdid').value = did;
+  document.getElementById('mexname').value = ''; document.getElementById('mexreps').value = '';
+  document.getElementById('mexsets').value = 3; document.getElementById('mexw').value = 0; document.getElementById('mexrest').value = 90;
+  openM('m-ex');
+}
+
+function saveExercise() {
+  var did = parseInt(document.getElementById('mexdid').value);
+  var n = document.getElementById('mexname').value.trim();
+  if (!n) return toast('Digite o nome', 'er');
+  var day = S.days.find(function(d) { return d.id === did; });
+  if (!day) return;
+  day.exercises.push({
+    id: S.nei++, name: n,
+    sets: parseInt(document.getElementById('mexsets').value) || 3,
+    reps: document.getElementById('mexreps').value || '10-12',
+    weight: parseFloat(document.getElementById('mexw').value) || 0,
+    rest: parseInt(document.getElementById('mexrest').value) || 90
+  });
+  sv(); closeM('m-ex'); renderDays(); toast('Exercício adicionado!');
+}
+
+function delEx(did, eid) {
+  var d = S.days.find(function(d) { return d.id === did; });
+  if (d) { d.exercises = d.exercises.filter(function(e) { return e.id !== eid; }); sv(); renderDays(); }
+}
+
+// ============================================================
+// CARDIO
+// ============================================================
+function openCardioModal() {
+  var c = S.cardio || {};
+  document.getElementById('mcfaz').value = c.faz || 'nao';
+  document.getElementById('mcfields').style.display = (c.faz && c.faz !== 'nao') ? 'block' : 'none';
+  if (c.tipo) document.getElementById('mctipo').value = c.tipo;
+  if (c.intensidade) document.getElementById('mcint').value = c.intensidade;
+  if (c.duracao) document.getElementById('mcdur').value = c.duracao;
+  if (c.freq) document.getElementById('mcfreq').value = c.freq;
+  if (c.momento) document.getElementById('mcmom').value = c.momento;
+  document.getElementById('mcobj').value = c.objetivo || '';
+  openM('m-cardio');
+}
+
+function saveCardio() {
+  var faz = document.getElementById('mcfaz').value;
+  S.cardio = {
+    faz: faz, tipo: document.getElementById('mctipo').value,
+    intensidade: document.getElementById('mcint').value,
+    duracao: parseInt(document.getElementById('mcdur').value) || null,
+    freq: parseInt(document.getElementById('mcfreq').value) || null,
+    momento: document.getElementById('mcmom').value,
+    objetivo: document.getElementById('mcobj').value.trim()
+  };
+  sv(); closeM('m-cardio'); renderCBanner(); toast('Cardio salvo!');
+}
+
+function renderCBanner() {
+  var el = document.getElementById('cbanner');
+  var c = S.cardio;
+  if (!c || c.faz === 'nao') { el.innerHTML = ''; return; }
+  var tipos = {caminhada:'🚶 Caminhada',corrida:'🏃 Corrida',bike:'🚴 Bike',eliptico:'Elíptico',hiit:'⚡ HIIT',natacao:'🏊 Natação',jump:'🦘 Jump',esteira:'Esteira',remo:'🚣 Remo',outro:'Outro'};
+  el.innerHTML = '<div class="cbn"><div class="fx g2 ai wp">' +
+    '<span style="font-family:\'Bebas Neue\',sans-serif;font-size:15px;letter-spacing:2px;color:var(--bl)">🏃 CARDIO</span>' +
+    (c.tipo ? '<span class="badge bbl">' + (tipos[c.tipo] || c.tipo) + '</span>' : '') +
+    (c.duracao ? '<span class="badge bm">' + c.duracao + 'min</span>' : '') +
+    (c.freq ? '<span class="badge bm">' + c.freq + 'x/sem</span>' : '') +
+    (c.intensidade ? '<span class="badge bm">' + c.intensidade + '</span>' : '') +
+    '</div><button class="btn bo bs" onclick="openCardioModal()">Editar</button></div>';
+}
+
+// ============================================================
+// LOG TREINO
+// ============================================================
+function renderLogView() {
+  var sel = document.getElementById('logday');
+  sel.innerHTML = S.days.length
+    ? S.days.map(function(d) { return '<option value="' + d.id + '">' + d.name + '</option>'; }).join('')
+    : '<option value="">Crie um treino primeiro</option>';
+  document.getElementById('logsess').style.display = 'none';
+}
+
+function getLL(eid) {
+  var ls = S.logs.filter(function(l) { return l.exercises && l.exercises.some(function(e) { return e.exId === eid; }); });
+  if (!ls.length) return null;
+  var last = ls[ls.length - 1];
+  var ex = last.exercises.find(function(e) { return e.exId === eid; });
+  return ex ? { date: last.date, sets: ex.sets } : null;
+}
+
+function bset(ll) {
+  if (!ll || !ll.sets || !ll.sets.length) return '—';
+  var b = ll.sets.reduce(function(a, b) { return (a.weight || 0) > (b.weight || 0) ? a : b; }, ll.sets[0]);
+  return b.weight + 'kg×' + b.reps;
+}
+
+function startLog() {
+  var did = parseInt(document.getElementById('logday').value);
+  if (!did) return toast('Selecione um dia', 'er');
+  var day = S.days.find(function(d) { return d.id === did; });
+  if (!day || !day.exercises.length) return toast('Adicione exercícios primeiro', 'er');
+  var html = day.exercises.map(function(ex) {
+    var ll = getLL(ex.id);
+    var rows = '';
+    for (var i = 0; i < ex.sets; i++) {
+      var pw = ll && ll.sets[i] ? ll.sets[i].weight : ex.weight;
+      var pr = ll && ll.sets[i] ? ll.sets[i].reps : '';
+      var prev = ll && ll.sets[i]
+        ? '<span style="font-family:\'DM Mono\',monospace;font-size:9px;color:var(--mu)">' + ll.sets[i].weight + 'kg</span>'
+        : '<span style="color:var(--br)">—</span>';
+      rows += '<tr><td style="font-family:\'DM Mono\',monospace;font-size:10px;color:var(--mu)">' + (i+1) + '</td><td>' + prev + '</td>' +
+        '<td><input type="number" class="sin" data-ex="' + ex.id + '" data-s="' + i + '" data-f="w" value="' + pw + '" step="0.5" min="0"></td>' +
+        '<td><input type="number" class="sin" data-ex="' + ex.id + '" data-s="' + i + '" data-f="r" value="' + pr + '" min="0"></td>' +
+        '<td><div class="sdk" onclick="this.classList.toggle(\'dn\')">✓</div></td></tr>';
+    }
+    return '<div class="card"><div style="font-family:\'Bebas Neue\',sans-serif;font-size:17px;letter-spacing:2px;margin-bottom:' + (ll ? '3px' : '10px') + '">' + ex.name + '</div>' +
+      (ll ? '<div style="font-family:\'DM Mono\',monospace;font-size:9px;color:var(--mu);margin-bottom:8px">Último: ' + ll.date + ' · melhor ' + bset(ll) + '</div>' : '') +
+      '<table class="stbl"><thead><tr><th>Série</th><th>Anterior</th><th>Kg</th><th>Reps</th><th></th></tr></thead><tbody>' + rows + '</tbody></table></div>';
+  }).join('');
+  document.getElementById('logexs').innerHTML = html;
+  document.getElementById('logsess').style.display = 'block';
+  toast('Sessão iniciada!');
+}
+
+function saveLog() {
+  var did = parseInt(document.getElementById('logday').value);
+  var date = document.getElementById('logdate').value;
+  var day = S.days.find(function(d) { return d.id === did; });
+  if (!day) return;
+  var exercises = day.exercises.map(function(ex) {
+    var sets = [];
+    for (var i = 0; i < ex.sets; i++) {
+      var wEl = document.querySelector('input[data-ex="' + ex.id + '"][data-s="' + i + '"][data-f="w"]');
+      var rEl = document.querySelector('input[data-ex="' + ex.id + '"][data-s="' + i + '"][data-f="r"]');
+      sets.push({ weight: parseFloat(wEl ? wEl.value : 0) || 0, reps: parseInt(rEl ? rEl.value : 0) || 0 });
+    }
+    return { exId: ex.id, name: ex.name, sets: sets };
+  });
+  S.logs.push({ id: Date.now(), date: date, dayId: did, dayName: day.name, exercises: exercises });
+  sv(); document.getElementById('logsess').style.display = 'none'; toast('✓ Treino salvo!');
+  exercises.forEach(function(ex) {
+    var all = S.logs.slice(0, -1)
+      .filter(function(l) { return l.exercises.some(function(e) { return e.exId === ex.exId; }); })
+      .flatMap(function(l) { return l.exercises.filter(function(e) { return e.exId === ex.exId; }).flatMap(function(e) { return e.sets.map(function(s) { return s.weight; }); }); });
+    if (all.length) {
+      var prev = Math.max.apply(null, all);
+      var cur = Math.max.apply(null, ex.sets.map(function(s) { return s.weight; }));
+      if (cur > prev) setTimeout(function() { toast('🏆 PR: ' + ex.name + ' ' + cur + 'kg'); }, 800);
+    }
+  });
+}
+
+// ============================================================
+// PROGRESSO
+// ============================================================
+function renderProgress() {
+  var all = S.days.flatMap(function(d) { return d.exercises; });
+  var sel = document.getElementById('pgsel');
+  sel.innerHTML = all.length
+    ? all.map(function(e) { return '<option value="' + e.id + '">' + e.name + '</option>'; }).join('')
+    : '<option>Sem exercícios</option>';
+  var ts = S.logs.length;
+  var sets = S.logs.flatMap(function(l) { return l.exercises.flatMap(function(e) { return e.sets; }); }).length;
+  var vol = S.logs.flatMap(function(l) { return l.exercises.flatMap(function(e) { return e.sets.map(function(s) { return s.weight * s.reps; }); }); }).reduce(function(a, b) { return a + b; }, 0);
+  document.getElementById('pgstats').innerHTML =
+    '<div class="sc"><div class="sl">Sessões</div><div class="sv">' + ts + '</div><div class="su">registradas</div></div>' +
+    '<div class="sc"><div class="sl">Total séries</div><div class="sv">' + sets + '</div><div class="su">realizadas</div></div>' +
+    '<div class="sc"><div class="sl">Volume total</div><div class="sv" style="color:var(--gn)">' + (vol/1000).toFixed(1) + '</div><div class="su">toneladas</div></div>' +
+    '<div class="sc"><div class="sl">Exercícios</div><div class="sv">' + all.length + '</div><div class="su">cadastrados</div></div>';
+  if (all.length) renderChart();
+}
+
+function renderChart() {
+  var eid = parseInt(document.getElementById('pgsel').value);
+  var cont = document.getElementById('pgchart');
+  var data = S.logs
+    .filter(function(l) { return l.exercises.some(function(e) { return e.exId === eid; }); })
+    .map(function(l) {
+      var ex = l.exercises.find(function(e) { return e.exId === eid; });
+      return { date: l.date, best: Math.max.apply(null, ex.sets.map(function(s) { return s.weight; })) };
+    })
+    .sort(function(a, b) { return a.date.localeCompare(b.date); });
+  if (!data.length) { cont.innerHTML = '<div class="emp"><div class="et">Sem histórico para este exercício</div></div>'; return; }
+  var mx = Math.max.apply(null, data.map(function(d) { return d.best; }));
+  var mn = Math.min.apply(null, data.map(function(d) { return d.best; }));
+  var nm = S.days.flatMap(function(d) { return d.exercises; }).find(function(e) { return e.id === eid; });
+  nm = nm ? nm.name : '';
+  var bars = data.map(function(d, i) {
+    var h = mx > 0 ? Math.round(d.best / mx * 100) : 4;
+    var cls = d.best === mx ? 'cb cbm' : i === data.length - 1 ? 'cb cbh' : 'cb';
+    return '<div class="cw"><div class="' + cls + '" style="height:' + h + '%" title="' + d.best + 'kg em ' + d.date + '"></div><div class="clb">' + d.date.slice(5).replace('-', '/') + '</div></div>';
+  }).join('');
+  cont.innerHTML = '<div class="card"><div class="fx jb ai wp g2 mb4"><div style="font-family:\'Bebas Neue\',sans-serif;font-size:17px;letter-spacing:2px">' + nm + '</div>' +
+    '<div class="fx g2"><span class="badge bm">Mín: ' + mn + 'kg</span><span class="badge bgn">Máx: ' + mx + 'kg</span></div></div>' +
+    '<div class="cbrs">' + bars + '</div>' +
+    '<div style="font-family:\'DM Mono\',monospace;font-size:8px;color:var(--mu);margin-top:5px;text-align:right">carga máx/sessão · <span style="color:var(--gn)">■</span> PR <span style="color:var(--ac)">■</span> Último</div></div>';
+}
+
+// ============================================================
+// HISTÓRICO
+// ============================================================
+function fmtd(s) {
+  var p = s.split('-');
+  var m = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+  return p[2] + ' ' + m[parseInt(p[1]) - 1] + ' ' + p[0];
+}
+
+function renderHistory() {
+  var el = document.getElementById('histlist');
+  if (!S.logs.length) { el.innerHTML = '<div class="emp"><div class="ei">📋</div><div class="et">Nenhum treino registrado</div></div>'; return; }
+  var sorted = S.logs.slice().sort(function(a, b) { return b.date.localeCompare(a.date); });
+  el.innerHTML = sorted.map(function(log) {
+    var exh = log.exercises.map(function(ex) {
+      var prev = S.logs
+        .filter(function(l) { return l.id !== log.id && l.exercises.some(function(e) { return e.exId === ex.exId; }); })
+        .flatMap(function(l) { return l.exercises.filter(function(e) { return e.exId === ex.exId; }).flatMap(function(e) { return e.sets.map(function(s) { return s.weight; }); }); });
+      var pm = prev.length ? Math.max.apply(null, prev) : -1;
+      var chips = ex.sets.map(function(s) {
+        var pr = s.weight > pm && pm >= 0;
+        return '<span class="chip' + (pr ? ' pr' : '') + '">' + s.weight + 'kg×' + s.reps + (pr ? ' 🏆' : '') + '</span>';
+      }).join('');
+      return '<div class="hex"><div style="font-weight:600;font-size:11px;margin-bottom:3px">' + ex.name + '</div><div class="hch">' + chips + '</div></div>';
+    }).join('');
+    return '<div class="hi"><div class="hihd" onclick="this.nextElementSibling.classList.toggle(\'on\')">' +
+      '<div><div style="font-family:\'DM Mono\',monospace;font-size:10px;color:var(--ac);letter-spacing:1px">' + fmtd(log.date) + '</div>' +
+      '<div style="font-weight:600;font-size:12px;margin-top:2px">' + log.dayName + '</div></div>' +
+      '<div class="fx g2 ai"><span class="badge bm">' + log.exercises.length + ' exerc.</span><span style="color:var(--mu);font-size:15px">›</span></div></div>' +
+      '<div class="hibd"><div>' + exh + '</div>' +
+      '<div style="text-align:right;margin-top:7px"><button class="btn bd bs" onclick="delLog(' + log.id + ')">Excluir</button></div></div></div>';
+  }).join('');
+}
+
+function delLog(id) {
+  if (!confirm('Excluir?')) return;
+  S.logs = S.logs.filter(function(l) { return l.id !== id; });
+  sv(); renderHistory(); toast('Removido');
+}
+
+// ============================================================
+// IMPORTAR TREINO
+// ============================================================
+var impData = null;
+
+(function() {
+  var dz = document.getElementById('dz');
+  dz.addEventListener('dragover', function(e) { e.preventDefault(); dz.classList.add('ov'); });
+  dz.addEventListener('dragleave', function() { dz.classList.remove('ov'); });
+  dz.addEventListener('drop', function(e) { e.preventDefault(); dz.classList.remove('ov'); var f = e.dataTransfer.files[0]; if (f) procImp(f); });
+  document.getElementById('impfile').addEventListener('change', function() { if (this.files[0]) procImp(this.files[0]); });
+  dz.addEventListener('click', function(e) { if (e.target === dz || e.target.parentElement === dz || e.target.parentElement.parentElement === dz) document.getElementById('impfile').click(); });
+})();
+
+function resetImp() {
+  document.getElementById('impprev').style.display = 'none';
+  document.getElementById('impfile').value = '';
+  impData = null;
+}
+
+var IMP_PROMPT = 'Analise o arquivo de treino e retorne APENAS JSON válido sem markdown:\n[{"name":"Nome do Dia","muscles":"Grupos musculares","exercises":[{"name":"Exercício","sets":3,"reps":"10-12","weight":0,"rest":90}]}]\nSe não encontrar séries use 3, reps use "10-12", weight use 0, rest use 90.';
+
+async function procImp(file) {
+  var ext = file.name.split('.').pop().toLowerCase();
+  if (!['pdf','docx','txt'].includes(ext)) return toast('Use PDF, Word ou TXT', 'er');
+  document.getElementById('impprev').style.display = 'block';
+  document.getElementById('impname').textContent = file.name;
+  document.getElementById('impsz').textContent = (file.size/1024).toFixed(1) + ' KB';
+  document.getElementById('impicon').textContent = ext === 'pdf' ? '📕' : ext === 'txt' ? '📝' : '📘';
+  document.getElementById('impload').style.display = 'block';
+  document.getElementById('impres').style.display = 'none';
+  document.getElementById('imperr').style.display = 'none';
+  try {
+    var msgs;
+    if (ext === 'pdf') {
+      var b64 = await toB64(file);
+      msgs = [{ role:'user', content:[{type:'document',source:{type:'base64',media_type:'application/pdf',data:b64}},{type:'text',text:IMP_PROMPT}] }];
+    } else if (ext === 'txt') {
+      var txt = await file.text();
+      msgs = [{ role:'user', content: IMP_PROMPT + '\n\nTexto:\n' + txt }];
+    } else {
+      var txt2 = await exDocx(file);
+      msgs = [{ role:'user', content: IMP_PROMPT + '\n\nTexto extraído:\n' + txt2 }];
+    }
+    var res = await apiCall(msgs, 2000);
+    var p = parseJ(res);
+    if (!p || !p.length) throw new Error('Não encontrei exercícios no arquivo.');
+    impData = p;
+    document.getElementById('impload').style.display = 'none';
+    renderImpPrev(p);
+  } catch(e) {
+    document.getElementById('impload').style.display = 'none';
+    document.getElementById('imperr').style.display = 'block';
+    document.getElementById('impermsg').textContent = e.message || 'Erro desconhecido';
+  }
+}
+
+function renderImpPrev(days) {
+  var html = days.map(function(d, di) {
+    var rows = d.exercises.map(function(ex, ei) {
+      return '<div class="ir">' +
+        '<input type="text" value="' + ex.name + '" id="in' + di + '_' + ei + '">' +
+        '<input type="number" value="' + ex.sets + '" id="is' + di + '_' + ei + '" min="1">' +
+        '<input type="text" value="' + ex.reps + '" id="ir' + di + '_' + ei + '">' +
+        '<input type="number" value="' + ex.weight + '" id="iw' + di + '_' + ei + '" step="0.5">' +
+        '<input type="number" value="' + ex.rest + '" id="ie' + di + '_' + ei + '"></div>';
+    }).join('');
+    return '<div class="card mb4"><div class="fx jb ai mb4"><div class="fx g2 ai">' +
+      '<span class="badge by">' + (di+1) + '</span>' +
+      '<input type="text" value="' + d.name + '" id="idn' + di + '" style="background:transparent;border:none;border-bottom:1px solid var(--br);color:var(--ac);font-family:\'Bebas Neue\',sans-serif;font-size:17px;letter-spacing:2px;outline:none;width:220px"></div>' +
+      '<span style="font-size:11px;color:var(--mu)">' + d.exercises.length + ' exerc.</span></div>' +
+      '<div class="ih"><span>Exercício</span><span>Séries</span><span>Reps</span><span>Carga</span><span>Desc</span></div>' + rows + '</div>';
+  }).join('');
+  document.getElementById('impres').style.display = 'block';
+  document.getElementById('impres').innerHTML =
+    '<div style="font-family:\'Bebas Neue\',sans-serif;font-size:18px;letter-spacing:2px;color:var(--gn);margin-bottom:3px">✓ TREINO IDENTIFICADO</div>' +
+    '<div style="font-size:11px;color:var(--mu);margin-bottom:12px">Revise e confirme</div>' + html +
+    '<div class="fx g3 mt4"><button class="btn bp" style="flex:1" onclick="confirmImp()">✓ IMPORTAR</button><button class="btn bo" onclick="resetImp()">Cancelar</button></div>';
+}
+
+function confirmImp() {
+  if (!impData) return;
+  impData.forEach(function(d, di) {
+    var nm = (document.getElementById('idn' + di) || {value:d.name}).value.trim() || d.name;
+    var exs = d.exercises.map(function(ex, ei) {
+      return {
+        id: S.nei++,
+        name: (document.getElementById('in' + di + '_' + ei) || {value:ex.name}).value.trim() || ex.name,
+        sets: parseInt((document.getElementById('is' + di + '_' + ei) || {value:3}).value) || 3,
+        reps: (document.getElementById('ir' + di + '_' + ei) || {value:'10-12'}).value || '10-12',
+        weight: parseFloat((document.getElementById('iw' + di + '_' + ei) || {value:0}).value) || 0,
+        rest: parseInt((document.getElementById('ie' + di + '_' + ei) || {value:90}).value) || 90
+      };
+    });
+    S.days.push({ id: S.ndi++, name: nm, muscles: d.muscles || '', exercises: exs });
+  });
+  sv(); resetImp(); toast('✓ Importado!'); goView('treinos'); renderDays(); renderCBanner();
+}
+
+// ============================================================
+// DIETA
+// ============================================================
+function setDietMode(m) {
+  document.getElementById('dietman').style.display = m === 'manual' ? 'block' : 'none';
+  document.getElementById('dietia').style.display = m === 'ia' ? 'block' : 'none';
+  document.getElementById('bdm').className = 'btn ' + (m === 'manual' ? 'bp' : 'bo');
+  document.getElementById('bdia').className = 'btn ' + (m === 'ia' ? 'bp' : 'bo');
+}
+
+function renderRefs() {
+  var el = document.getElementById('reflist');
+  var refs = (S.dieta && S.dieta.refeicoes) ? S.dieta.refeicoes : [];
+  if (!refs.length) { el.innerHTML = '<div style="font-size:12px;color:var(--mu)">Nenhuma refeição ainda.</div>'; return; }
+  el.innerHTML = refs.map(function(r, i) {
+    var ali = r.alimentos.split('\n').filter(Boolean).map(function(a) { return '• ' + a.trim(); }).join('<br>');
+    return '<div class="rc"><div class="rh"><div><span style="font-weight:700;font-size:12px">' + r.nome + '</span>' +
+      (r.horario ? '<span style="font-family:\'DM Mono\',monospace;font-size:9px;color:var(--ac);margin-left:8px">' + r.horario + '</span>' : '') + '</div>' +
+      '<button class="btn bi bs" style="color:var(--re)" onclick="delRef(' + i + ')">✕</button></div>' +
+      '<div style="font-size:11px;color:var(--mu);line-height:1.7">' + ali + '</div></div>';
+  }).join('');
+}
+
+function saveRef() {
+  var n = document.getElementById('mrnom').value.trim();
+  if (!n) return toast('Digite o nome', 'er');
+  if (!S.dieta) S.dieta = { refeicoes: [], textoIA: '', macros: null };
+  S.dieta.refeicoes.push({ nome: n, horario: document.getElementById('mrhor').value, alimentos: document.getElementById('mrali').value.trim() });
+  sv(); closeM('m-ref'); renderRefs(); toast('Refeição adicionada!');
+}
+
+function delRef(i) { S.dieta.refeicoes.splice(i, 1); sv(); renderRefs(); }
+
+var KT = [
+  {k:['ovo','ovos'],kcal:155,p:13,c:1.1,g:11,u:'un',q:1},
+  {k:['arroz'],kcal:130,p:2.7,c:28,g:0.3,u:'g',q:100},
+  {k:['frango','peito de frango'],kcal:165,p:31,c:0,g:3.6,u:'g',q:100},
+  {k:['carne','patinho','alcatra'],kcal:180,p:26,c:0,g:8,u:'g',q:100},
+  {k:['batata doce','batata'],kcal:86,p:1.6,c:20,g:0.1,u:'g',q:100},
+  {k:['banana'],kcal:90,p:1.1,c:23,g:0.3,u:'un',q:1},
+  {k:['pão'],kcal:265,p:9,c:49,g:3.2,u:'fatia',q:1},
+  {k:['aveia'],kcal:380,p:14,c:66,g:7,u:'g',q:100},
+  {k:['whey','whey protein'],kcal:120,p:24,c:3,g:1.5,u:'g',q:30},
+  {k:['feijão','lentilha'],kcal:130,p:8,c:22,g:0.5,u:'g',q:100},
+  {k:['atum'],kcal:130,p:28,c:0,g:1,u:'g',q:100},
+  {k:['salmão','peixe'],kcal:200,p:22,c:0,g:13,u:'g',q:100},
+  {k:['azeite','óleo'],kcal:884,p:0,c:0,g:100,u:'g',q:100},
+  {k:['amendoim','pasta de amendoim'],kcal:570,p:25,c:16,g:50,u:'g',q:100},
+  {k:['leite'],kcal:61,p:3.2,c:4.8,g:3.3,u:'ml',q:100}
+];
+
+function estRef(txt) {
+  var tot = {kcal:0,p:0,c:0,g:0};
+  txt.split(/[\n,]+/).map(function(l) { return l.trim().toLowerCase(); }).filter(Boolean).forEach(function(l) {
+    var m = l.match(/(\d+\.?\d*)\s*(g|ml|kg|un|fatia)?/i);
+    var q = m ? parseFloat(m[1]) : 1;
+    for (var i = 0; i < KT.length; i++) {
+      var it = KT[i];
+      if (it.k.some(function(k) { return l.includes(k); })) {
+        var f = (it.u === 'g' || it.u === 'ml') ? q / it.q : q;
+        tot.kcal += it.kcal * f; tot.p += it.p * f; tot.c += it.c * f; tot.g += it.g * f;
+        break;
+      }
+    }
+  });
+  return { kcal: Math.round(tot.kcal), p: Math.round(tot.p), c: Math.round(tot.c), g: Math.round(tot.g) };
+}
+
+function calcMacros() {
+  var refs = (S.dieta && S.dieta.refeicoes) ? S.dieta.refeicoes : [];
+  if (!refs.length) return toast('Adicione refeições primeiro', 'er');
+  var tot = {kcal:0,p:0,c:0,g:0};
+  refs.forEach(function(r) { var e = estRef(r.alimentos); tot.kcal += e.kcal; tot.p += e.p; tot.c += e.c; tot.g += e.g; });
+  if (!S.dieta) S.dieta = { refeicoes: [], textoIA: '', macros: null };
+  S.dieta.macros = tot; sv();
+  document.getElementById('macman').style.display = 'block';
+  document.getElementById('macgrid').innerHTML =
+    '<div class="sc"><div class="sl">Calorias</div><div class="sv">' + tot.kcal + '</div><div class="su">kcal/dia</div></div>' +
+    '<div class="sc"><div class="sl">Proteína</div><div class="sv" style="color:var(--gn)">' + tot.p + 'g</div><div class="su">' + Math.round(tot.p*4) + ' kcal</div></div>' +
+    '<div class="sc"><div class="sl">Carboidrato</div><div class="sv" style="color:var(--ac)">' + tot.c + 'g</div><div class="su">' + Math.round(tot.c*4) + ' kcal</div></div>' +
+    '<div class="sc"><div class="sl">Gordura</div><div class="sv" style="color:var(--or)">' + tot.g + 'g</div><div class="su">' + Math.round(tot.g*9) + ' kcal</div></div>';
+  toast('Macros calculados!');
+}
+
+function handleDietFile(input) {
+  var file = input.files[0]; if (!file) return;
+  var ext = file.name.split('.').pop().toLowerCase();
+  if (ext === 'txt') {
+    file.text().then(function(txt) { document.getElementById('diettxt').value = txt; toast('Lido! Clique em Analisar.'); });
+  } else if (ext === 'docx') {
+    exDocx(file).then(function(txt) { document.getElementById('diettxt').value = txt; toast('Lido! Clique em Analisar.'); }).catch(function() { toast('Não foi possível ler o Word', 'er'); });
+  } else { toast('Para PDF, cole o texto abaixo', 'er'); }
+}
+
+async function analiseDieta() {
+  var txt = document.getElementById('diettxt').value.trim();
+  if (!txt) return toast('Cole sua dieta primeiro', 'er');
+  document.getElementById('diaload').style.display = 'block';
+  document.getElementById('diares').style.display = 'none';
+  try {
+    var res = await apiCall([{role:'user',content:'Analise esta dieta e retorne APENAS JSON sem markdown:\n{"kcal_total":0,"proteina_g":0,"carboidrato_g":0,"gordura_g":0,"resumo":"","pontos_positivos":[],"pontos_melhora":[]}\nContexto: objetivo "' + (S.corpo ? S.corpo.obj : '') + '" peso ' + (S.corpo ? S.corpo.peso : '?') + 'kg.\nDieta:\n' + txt}], 1500);
+    var d = parseJ(res);
+    if (!S.dieta) S.dieta = { refeicoes: [], textoIA: '', macros: null };
+    S.dieta.textoIA = txt; S.dieta.macros = {kcal:d.kcal_total,p:d.proteina_g,c:d.carboidrato_g,g:d.gordura_g}; sv();
+    document.getElementById('diaload').style.display = 'none';
+    document.getElementById('diares').style.display = 'block';
+    var pos = (d.pontos_positivos || []).map(function(p) { return '<div style="font-size:11px;color:var(--mu);margin-bottom:2px">• ' + p + '</div>'; }).join('');
+    var neg = (d.pontos_melhora || []).map(function(p) { return '<div style="font-size:11px;color:var(--mu);margin-bottom:2px">• ' + p + '</div>'; }).join('');
+    document.getElementById('diares').innerHTML =
+      '<div class="sgrid"><div class="sc"><div class="sl">Calorias</div><div class="sv">' + d.kcal_total + '</div><div class="su">kcal/dia</div></div>' +
+      '<div class="sc"><div class="sl">Proteína</div><div class="sv" style="color:var(--gn)">' + d.proteina_g + 'g</div></div>' +
+      '<div class="sc"><div class="sl">Carboidrato</div><div class="sv" style="color:var(--ac)">' + d.carboidrato_g + 'g</div></div>' +
+      '<div class="sc"><div class="sl">Gordura</div><div class="sv" style="color:var(--or)">' + d.gordura_g + 'g</div></div></div>' +
+      '<div class="card"><div style="font-size:12px;color:var(--tx);line-height:1.7;margin-bottom:9px">' + (d.resumo || '') + '</div>' +
+      (pos ? '<div class="fl" style="color:var(--gn);margin-bottom:4px">✓ Positivos</div>' + pos : '') +
+      (neg ? '<div class="fl" style="color:var(--or);margin-top:9px;margin-bottom:4px">⚠ Melhorias</div>' + neg : '') + '</div>';
+    toast('Dieta analisada!');
+  } catch(e) { document.getElementById('diaload').style.display = 'none'; toast('Erro ao analisar', 'er'); }
+}
+
+// ============================================================
+// BIOIMPEDÂNCIA PDF
+// ============================================================
+async function handleBioFile(input) {
+  var file = input.files[0]; if (!file) return;
+  document.getElementById('bioload').style.display = 'block';
+  document.getElementById('biores').style.display = 'none';
+  try {
+    var b64 = await toB64(file);
+    var res = await apiCall([{role:'user',content:[
+      {type:'document',source:{type:'base64',media_type:'application/pdf',data:b64}},
+      {type:'text',text:'Extraia dados deste laudo de bioimpedância. Retorne APENAS JSON sem markdown:\n{"nome":"","data_avaliacao":"","peso":null,"altura_cm":null,"idade":null,"sexo":"","pgc":null,"massa_gordura_kg":null,"massa_muscular_esqueletica_kg":null,"massa_magra_kg":null,"agua_corporal_l":null,"proteina_kg":null,"minerais_kg":null,"imc":null,"tmb_kcal":null,"gordura_visceral":null,"relacao_cintura_quadril":null,"grau_obesidade_pct":null,"pontuacao_inbody":null,"peso_ideal_kg":null,"seg_magra_braco_d":null,"seg_magra_braco_e":null,"seg_magra_tronco":null,"seg_magra_perna_d":null,"seg_magra_perna_e":null,"seg_gordura_braco_d":null,"seg_gordura_braco_e":null,"seg_gordura_tronco":null,"seg_gordura_perna_d":null,"seg_gordura_perna_e":null}'}
+    ]}], 1200);
+    var bio = parseJ(res);
+    var mp = {
+      'cn':'nome','cdt':'data_avaliacao','cpeso':'peso','calt':'altura_cm','cid':'idade',
+      'cpgc':'pgc','cmg':'massa_gordura_kg','cmm':'massa_muscular_esqueletica_kg','cma':'massa_magra_kg',
+      'cabio':'agua_corporal_l','cprt':'proteina_kg','cmin':'minerais_kg','cimc':'imc',
+      'ctmb':'tmb_kcal','cvisc':'gordura_visceral','crcq':'relacao_cintura_quadril',
+      'cgob':'grau_obesidade_pct','cscore':'pontuacao_inbody','cpid':'peso_ideal_kg',
+      'smbd':'seg_magra_braco_d','smbe':'seg_magra_braco_e','smtr':'seg_magra_tronco','smpd':'seg_magra_perna_d','smpe':'seg_magra_perna_e',
+      'sgbd':'seg_gordura_braco_d','sgbe':'seg_gordura_braco_e','sgtr':'seg_gordura_tronco','sgpd':'seg_gordura_perna_d','sgpe':'seg_gordura_perna_e'
+    };
+    if (bio.sexo) document.getElementById('csex').value = (bio.sexo === 'Masculino' || bio.sexo === 'M') ? 'M' : 'F';
+    Object.keys(mp).forEach(function(id) { var el = document.getElementById(id); if (el && bio[mp[id]] != null) el.value = bio[mp[id]]; });
+    document.getElementById('bioload').style.display = 'none';
+    document.getElementById('biores').style.display = 'block';
+    var filled = Object.values(bio).filter(function(v) { return v != null; }).length;
+    document.getElementById('biores').innerHTML =
+      '<div style="display:flex;flex-wrap:wrap;gap:5px">' +
+      '<span style="font-family:\'DM Mono\',monospace;font-size:9px;color:var(--gn);text-transform:uppercase;letter-spacing:1px;width:100%;margin-bottom:4px">✓ ' + filled + ' campos extraídos — revise e salve</span>' +
+      (bio.nome ? '<span class="badge bm">' + bio.nome + '</span>' : '') +
+      (bio.peso ? '<span class="badge by">' + bio.peso + 'kg</span>' : '') +
+      (bio.pgc != null ? '<span class="badge bm">' + bio.pgc + '% gord.</span>' : '') +
+      (bio.massa_muscular_esqueletica_kg ? '<span class="badge bgn">' + bio.massa_muscular_esqueletica_kg + 'kg musc.</span>' : '') +
+      (bio.tmb_kcal ? '<span class="badge bm">TMB ' + bio.tmb_kcal + 'kcal</span>' : '') +
+      (bio.pontuacao_inbody ? '<span class="badge by">InBody ' + bio.pontuacao_inbody + '/100</span>' : '') +
+      '</div>';
+    toast('PDF lido! Revise e salve.');
+  } catch(e) { document.getElementById('bioload').style.display = 'none'; toast('Erro ao ler PDF', 'er'); }
+}
+
+// ============================================================
+// CORPO
+// ============================================================
+function saveCorpo() {
+  function n(id) { return parseFloat(document.getElementById(id) ? document.getElementById(id).value : '') || null; }
+  function s(id) { return document.getElementById(id) ? document.getElementById(id).value || null : null; }
+  S.corpo = {
+    nome:s('cn'), dataAv:s('cdt'), peso:n('cpeso'), altura:n('calt'),
+    idade: parseInt(document.getElementById('cid') ? document.getElementById('cid').value : '') || null,
+    sexo:s('csex'), pgc:n('cpgc'), massaGord:n('cmg'), massaMusc:n('cmm'), massaMagra:n('cma'),
+    aguaBio:n('cabio'), prot:n('cprt'), min:n('cmin'), imc:n('cimc'),
+    tmb:n('ctmb'), visc:n('cvisc'), rcq:n('crcq'), gob:n('cgob'), score:n('cscore'), pideal:n('cpid'),
+    seg: {
+      m:{bd:n('smbd'),be:n('smbe'),tr:n('smtr'),pd:n('smpd'),pe:n('smpe')},
+      g:{bd:n('sgbd'),be:n('sgbe'),tr:n('sgtr'),pd:n('sgpd'),pe:n('sgpe')}
+    },
+    obj:s('cobj'), ativ:s('cativ'),
+    per: parseInt(document.getElementById('cper') ? document.getElementById('cper').value : '') || null,
+    aguaDia:n('cagd'), sono:n('csono'), sonoQ:s('csonq'), obs:s('cobs')
+  };
+  sv(); calcInd(); toast('✓ Dados salvos!');
+}
+
+function calcInd() {
+  var c = S.corpo; if (!c || !c.peso || !c.altura) return;
+  var imc = c.imc || (c.peso / Math.pow(c.altura / 100, 2));
+  var il = imc < 18.5 ? 'Abaixo do peso' : imc < 25 ? 'Peso normal' : imc < 30 ? 'Sobrepeso' : 'Obesidade';
+  var ic = imc < 18.5 ? 'var(--re)' : imc < 25 ? 'var(--gn)' : imc < 30 ? 'var(--or)' : 'var(--re)';
+  var fts = {sedentario:1.2,leve:1.375,moderado:1.55,ativo:1.725,atleta:1.9};
+  var fat = fts[c.ativ || 'moderado'] || 1.55;
+  var tmb = c.tmb || Math.round(c.sexo === 'M' ? 10*c.peso + 6.25*c.altura - 5*(c.idade||30) + 5 : 10*c.peso + 6.25*c.altura - 5*(c.idade||30) - 161);
+  var tdee = Math.round(tmb * fat);
+  var gp = c.pgc != null ? c.pgc : (c.massaGord ? +(c.massaGord / c.peso * 100).toFixed(1) : null);
+  document.getElementById('corpopanel').style.display = 'block';
+  document.getElementById('cstats').innerHTML =
+    '<div class="sc"><div class="sl">Peso</div><div class="sv">' + c.peso + '</div><div class="su">kg' + (c.pideal ? ' · ideal ' + c.pideal + 'kg' : '') + '</div></div>' +
+    '<div class="sc"><div class="sl">IMC</div><div class="sv" style="color:' + ic + '">' + imc.toFixed(1) + '</div><div class="su">' + il + '</div></div>' +
+    '<div class="sc"><div class="sl">TDEE estimado</div><div class="sv" style="color:var(--ac)">' + tdee + '</div><div class="su">kcal/dia · TMB ' + tmb + '</div></div>' +
+    (gp != null ? '<div class="sc"><div class="sl">% Gordura</div><div class="sv" style="color:var(--or)">' + gp + '%</div><div class="su">' + (c.massaGord ? c.massaGord + 'kg gord.' : '') + '</div></div>' : '') +
+    (c.massaMusc ? '<div class="sc"><div class="sl">Massa muscular esq.</div><div class="sv" style="color:var(--gn)">' + c.massaMusc + 'kg</div><div class="su">' + Math.round(c.massaMusc/c.peso*100) + '% do peso</div></div>' : '') +
+    (c.massaMagra ? '<div class="sc"><div class="sl">Massa magra</div><div class="sv" style="color:var(--gn)">' + c.massaMagra + 'kg</div></div>' : '') +
+    (c.visc != null ? '<div class="sc"><div class="sl">Gordura visceral</div><div class="sv" style="color:' + (c.visc <= 9 ? 'var(--gn)' : 'var(--re)') + '">' + c.visc + '</div><div class="su">nível (1-20)</div></div>' : '') +
+    (c.aguaBio ? '<div class="sc"><div class="sl">Água corporal</div><div class="sv">' + c.aguaBio + 'L</div><div class="su">' + Math.round(c.aguaBio/c.peso*100) + '%</div></div>' : '') +
+    (c.score ? '<div class="sc"><div class="sl">Score InBody</div><div class="sv" style="color:var(--ac)">' + c.score + '</div><div class="su">de 100</div></div>' : '') +
+    (c.aguaDia ? '<div class="sc"><div class="sl">💧 Água/dia</div><div class="sv" style="color:var(--bl)">' + c.aguaDia + 'L</div><div class="su">consumida</div></div>' : '') +
+    (c.sono ? '<div class="sc"><div class="sl">😴 Sono</div><div class="sv" style="color:var(--pu)">' + c.sono + 'h</div><div class="su">' + (c.sonoQ || '') + '</div></div>' : '');
+  var sg = c.seg;
+  if (sg && (sg.m.bd || sg.m.tr)) {
+    document.getElementById('segpanel').style.display = 'block';
+    var ss = [['Braço D',sg.m.bd,sg.g.bd],['Braço E',sg.m.be,sg.g.be],['Tronco',sg.m.tr,sg.g.tr],['Perna D',sg.m.pd,sg.g.pd],['Perna E',sg.m.pe,sg.g.pe]];
+    document.getElementById('segpanel').innerHTML = '<div style="font-family:\'Bebas Neue\',sans-serif;font-size:17px;letter-spacing:2px;margin-bottom:9px">ANÁLISE SEGMENTAR</div>' +
+      '<div class="sg5">' + ss.map(function(s) {
+        return '<div class="sgc"><div class="fl" style="margin-bottom:5px">' + s[0] + '</div>' +
+          (s[1] != null ? '<div style="color:var(--gn);font-family:\'Bebas Neue\',sans-serif;font-size:14px">' + s[1] + 'kg</div><div style="font-size:8px;color:var(--mu)">magra</div>' : '') +
+          (s[2] != null ? '<div style="color:var(--or);font-family:\'Bebas Neue\',sans-serif;font-size:12px;margin-top:2px">' + s[2] + 'kg</div><div style="font-size:8px;color:var(--mu)">gordura</div>' : '') +
+          '</div>';
+      }).join('') + '</div>';
+  }
+}
+
+function loadCorpoForm() {
+  var c = S.corpo; if (!c) return;
+  var mp = {'cn':'nome','cdt':'dataAv','cpeso':'peso','calt':'altura','cid':'idade','cpgc':'pgc','cmg':'massaGord','cmm':'massaMusc','cma':'massaMagra','cabio':'aguaBio','cprt':'prot','cmin':'min','cimc':'imc','ctmb':'tmb','cvisc':'visc','crcq':'rcq','cgob':'gob','cscore':'score','cpid':'pideal','cper':'per','cagd':'aguaDia','csono':'sono','cobs':'obs'};
+  Object.keys(mp).forEach(function(id) { var el = document.getElementById(id); if (el && c[mp[id]] != null) el.value = c[mp[id]]; });
+  if (c.sexo) document.getElementById('csex').value = c.sexo;
+  if (c.obj) document.getElementById('cobj').value = c.obj;
+  if (c.ativ) document.getElementById('cativ').value = c.ativ;
+  if (c.sonoQ) document.getElementById('csonq').value = c.sonoQ;
+  if (c.seg) {
+    var sm = {'smbd':'bd','smbe':'be','smtr':'tr','smpd':'pd','smpe':'pe'};
+    Object.keys(sm).forEach(function(id) {
+      var el = document.getElementById(id); if (el && c.seg.m[sm[id]] != null) el.value = c.seg.m[sm[id]];
+      var gel = document.getElementById(id.replace('sm','sg')); if (gel && c.seg.g[sm[id]] != null) gel.value = c.seg.g[sm[id]];
+    });
+  }
+  calcInd();
+}
+
+// ============================================================
+// MEDICAMENTOS
+// ============================================================
+function renderMeds() {
+  var el = document.getElementById('medlist');
+  if (!S.meds || !S.meds.length) { el.innerHTML = '<div class="emp"><div class="ei">💊</div><div class="et">Nenhum cadastrado</div></div>'; return; }
+  var cc = {hormonio:'ch',peptideo:'cp',suplemento:'cs',medicamento:'cm',sarm:'csa',outro:'co'};
+  el.innerHTML = S.meds.map(function(m, i) {
+    return '<div class="mdc"><div style="flex:1">' +
+      '<div class="fx g2 ai wp mb2"><span style="font-weight:700;font-size:12px">' + m.nome + '</span><span class="mcat ' + (cc[m.categoria] || 'co') + '">' + m.categoria + '</span></div>' +
+      '<div style="font-family:\'DM Mono\',monospace;font-size:9px;color:var(--mu)">' + (m.dose ? m.dose + ' · ' : '') + (m.freq ? m.freq + ' · ' : '') + m.via + (m.inicio ? ' · início: ' + m.inicio : '') + '</div>' +
+      (m.obs ? '<div style="font-size:10px;color:var(--mu);margin-top:2px">' + m.obs + '</div>' : '') +
+      '</div><button class="btn bi bs" style="color:var(--re)" onclick="delMed(' + i + ')">✕</button></div>';
+  }).join('');
+}
+
+function saveMed() {
+  var n = document.getElementById('mmnom').value.trim();
+  if (!n) return toast('Digite o nome', 'er');
+  S.meds.push({
+    nome: n, categoria: document.getElementById('mmcat').value,
+    dose: document.getElementById('mmdose').value.trim(),
+    freq: document.getElementById('mmfreq').value.trim(),
+    via: document.getElementById('mmvia').value,
+    inicio: document.getElementById('mminicio').value.trim(),
+    obs: document.getElementById('mmobs').value.trim()
+  });
+  sv(); closeM('m-med');
+  ['mmnom','mmdose','mmfreq','mminicio','mmobs'].forEach(function(id) { document.getElementById(id).value = ''; });
+  renderMeds(); toast('Adicionado!');
+}
+
+function delMed(i) { S.meds.splice(i, 1); sv(); renderMeds(); }
+
+// ============================================================
+// ANÁLISE IA
+// ============================================================
+function renderAnChk() {
+  var items = [
+    {l:'Treinos cadastrados', ok: S.days.length > 0},
+    {l:'Dados corporais / objetivo', ok: !!(S.corpo && S.corpo.obj)},
+    {l:'Dieta cadastrada', ok: !!(S.dieta && (S.dieta.refeicoes.length || S.dieta.textoIA))},
+    {l:'Medicamentos (opcional)', ok: !!(S.meds && S.meds.length)}
+  ];
+  document.getElementById('anchk').innerHTML = '<div class="card">' +
+    items.map(function(it) {
+      return '<div class="chk"><div class="dot" style="background:' + (it.ok ? 'var(--gn)' : 'var(--br)') + '"></div>' +
+        '<span style="color:' + (it.ok ? 'var(--tx)' : 'var(--mu)') + '">' + it.l + '</span>' +
+        '<span style="font-family:\'DM Mono\',monospace;font-size:9px;color:' + (it.ok ? 'var(--gn)' : 'var(--mu)') + ';margin-left:auto">' + (it.ok ? '✓ OK' : 'Pendente') + '</span></div>';
+    }).join('') + '</div>';
+}
+
+async function gerarAnalise() {
+  var c = S.corpo || {};
+  var fts = {sedentario:1.2,leve:1.375,moderado:1.55,ativo:1.725,atleta:1.9};
+  var fat = fts[c.ativ || 'moderado'] || 1.55;
+  var tmb = c.tmb || Math.round(c.sexo === 'M' ? 10*(c.peso||70)+6.25*(c.altura||170)-5*(c.idade||30)+5 : 10*(c.peso||60)+6.25*(c.altura||160)-5*(c.idade||30)-161);
+  var tdee = Math.round(tmb * fat);
+  var mc = S.dieta && S.dieta.macros ? S.dieta.macros : null;
+  var ca = S.cardio || {};
+  var objMap = {ganho_massa:'Ganho de massa muscular',cutting:'Cutting',recomposicao:'Recomposição corporal',manutencao:'Manutenção',forca:'Ganho de força',definicao:'Definição muscular'};
+  var trDesc = S.days.map(function(d) { return d.name + ': ' + d.exercises.map(function(e) { return e.name; }).join(', '); }).join('\n');
+  var dietDesc = (S.dieta && S.dieta.textoIA) ? S.dieta.textoIA : ((S.dieta && S.dieta.refeicoes) ? S.dieta.refeicoes.map(function(r) { return r.nome + ': ' + r.alimentos; }).join('\n') : 'Não informada');
+  var medsDesc = S.meds.length ? S.meds.map(function(m) { return m.nome + ' (' + m.categoria + ') ' + m.dose + ' ' + m.freq + ' via ' + m.via; }).join('\n') : 'Nenhum';
+  var cardioDesc = (ca.faz && ca.faz !== 'nao') ? (ca.tipo + ' ' + (ca.duracao||'?') + 'min ' + (ca.freq||'?') + 'x/sem ' + ca.intensidade + ' momento:' + ca.momento) : 'Não pratica cardio';
+
+  var prompt = 'Analise os dados e retorne APENAS JSON sem markdown:\n' +
+    '{"scores":{"treino":{"valor":0,"label":""},"dieta":{"valor":0,"label":""},"sono":{"valor":0,"label":""},"hidratacao":{"valor":0,"label":""},"cardio":{"valor":0,"label":""},"geral":{"valor":0,"label":""}},' +
+    '"ajustes":{"proteina_atual_g":null,"proteina_ideal_g":0,"proteina_delta":"","carb_atual_g":null,"carb_ideal_g":0,"carb_delta":"","gordura_atual_g":null,"gordura_ideal_g":0,"gordura_delta":"","kcal_atual":null,"kcal_ideal":0,"kcal_delta":"","agua_atual_l":null,"agua_ideal_l":0,"agua_delta":"","sono_atual_h":null,"sono_ideal_h":0,"sono_delta":"","treino_volume":"manter","cardio_recomendacao":""},' +
+    '"analise":{"resumo_geral":"","treino":"","dieta":"","recuperacao":"","suporte":"","projecao":""},' +
+    '"dicas":["","","","",""]}\n\n' +
+    'DADOS:\n- Peso:' + c.peso + 'kg Altura:' + c.altura + 'cm Idade:' + c.idade + ' Sexo:' + (c.sexo==='M'?'M':'F') + '\n' +
+    '- %Gord:' + c.pgc + '% MuscEsq:' + c.massaMusc + 'kg MassaMagra:' + c.massaMagra + 'kg IMC:' + c.imc + '\n' +
+    '- TMB:' + tmb + 'kcal TDEE:' + tdee + 'kcal\n' +
+    '- Água/dia:' + c.aguaDia + 'L Sono:' + c.sono + 'h/noite qualidade:' + c.sonoQ + '\n' +
+    '- Objetivo:' + (objMap[c.obj]||c.obj||'Não informado') + ' Atividade:' + c.ativ + ' Período:' + (c.per||8) + 'sem\n' +
+    '- Obs:' + (c.obs||'Nenhuma') + '\n' +
+    'TREINOS (' + S.days.length + ' dias, ' + S.logs.length + ' sessões):\n' + trDesc + '\n' +
+    'CARDIO: ' + cardioDesc + '\n' +
+    'DIETA:\n' + dietDesc + (mc ? '\nMacros:' + mc.kcal + 'kcal ' + mc.p + 'g prot ' + mc.c + 'g carb ' + mc.g + 'g gord' : '') + '\n' +
+    'MEDICAMENTOS:\n' + medsDesc;
+
+  document.getElementById('anform').style.display = 'none';
+  document.getElementById('anload').style.display = 'block';
+  document.getElementById('anres').style.display = 'none';
+
+  try {
+    var res = await apiCall([{role:'user',content:prompt}], 2500);
+    var r = parseJ(res);
+    document.getElementById('anload').style.display = 'none';
+    document.getElementById('anres').style.display = 'block';
+    document.getElementById('anres').innerHTML = buildReport(r, c);
+    toast('Análise gerada!');
+  } catch(e) {
+    document.getElementById('anload').style.display = 'none';
+    document.getElementById('anform').style.display = 'block';
+    toast('Erro: ' + (e.message || 'tente novamente'), 'er');
+  }
+}
+
+function buildReport(r, c) {
+  function sc(v) { return v >= 7.5 ? 'var(--gn)' : v >= 5 ? 'var(--or)' : 'var(--re)'; }
+  function sb(v) { return v >= 7.5 ? '#001a0a' : v >= 5 ? '#1a1200' : '#1a0000'; }
+  var scores = r.scores || {}; var aj = r.ajustes || {}; var an = r.analise || {};
+
+  // Score rings
+  var ringNames = {treino:'Treino',dieta:'Dieta',sono:'Sono',hidratacao:'Hidratação',cardio:'Cardio',geral:'Geral'};
+  var rings = Object.keys(scores).map(function(k) {
+    var s = scores[k]; var v = s.valor || 0; var pct = v / 10 * 100;
+    var circ = 2 * Math.PI * 22; var off = circ * (1 - pct / 100);
+    return '<div class="src" style="background:' + sb(v) + ';border:1px solid ' + sc(v) + '">' +
+      '<div class="fl" style="margin-bottom:7px">' + (ringNames[k] || k) + '</div>' +
+      '<div style="position:relative;width:52px;height:52px;margin:0 auto 6px">' +
+      '<svg viewBox="0 0 56 56" style="transform:rotate(-90deg);width:52px;height:52px">' +
+      '<circle cx="28" cy="28" r="22" fill="none" stroke="var(--br)" stroke-width="5"/>' +
+      '<circle cx="28" cy="28" r="22" fill="none" stroke="' + sc(v) + '" stroke-width="5" stroke-dasharray="' + circ.toFixed(1) + '" stroke-dashoffset="' + off.toFixed(1) + '" stroke-linecap="round"/>' +
+      '</svg><div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:\'Bebas Neue\',sans-serif;font-size:18px;color:' + sc(v) + '">' + v + '</div></div>' +
+      '<div style="font-size:9px;color:var(--mu);line-height:1.3">' + (s.label || '') + '</div></div>';
+  }).join('');
+
+  // Ajuste bars
+  function ajBar(lbl, atual, ideal, delta, unit, cor) {
+    if (!ideal) return '';
+    var mx = Math.max(atual || 0, ideal, 1);
+    var pA = Math.round((atual || 0) / mx * 100); var pI = Math.round(ideal / mx * 100);
+    var pos = delta && delta.startsWith('+'); var neg = delta && delta.startsWith('-');
+    return '<div class="ajr"><div class="ajl"><span>' + lbl + '</span>' +
+      '<div class="fx g2 ai">' +
+      (atual ? '<span style="font-family:\'DM Mono\',monospace;font-size:9px;color:var(--mu)">' + atual + unit + '</span>' : '') +
+      '<span style="font-family:\'DM Mono\',monospace;font-size:9px;color:var(--ac)">→' + ideal + unit + '</span>' +
+      (delta ? '<span style="font-family:\'DM Mono\',monospace;font-size:9px;padding:1px 7px;border-radius:2px;background:' + (pos ? '#001a0a' : neg ? '#1a0000' : 'var(--s2)') + ';color:' + (pos ? 'var(--gn)' : neg ? 'var(--re)' : 'var(--mu)') + '">' + delta + '</span>' : '') +
+      '</div></div>' +
+      '<div class="ajb"><div class="aj-cur" style="width:' + pA + '%"></div><div class="aj-tgt" style="width:' + pI + '%;background:' + cor + '"></div></div></div>';
+  }
+
+  var ajHtml =
+    ajBar('Proteína', aj.proteina_atual_g, aj.proteina_ideal_g, aj.proteina_delta, 'g', 'var(--gn)') +
+    ajBar('Carboidratos', aj.carb_atual_g, aj.carb_ideal_g, aj.carb_delta, 'g', 'var(--ac)') +
+    ajBar('Gorduras', aj.gordura_atual_g, aj.gordura_ideal_g, aj.gordura_delta, 'g', 'var(--or)') +
+    ajBar('Calorias', aj.kcal_atual, aj.kcal_ideal, aj.kcal_delta, 'kcal', 'var(--pu)') +
+    ajBar('Água', aj.agua_atual_l, aj.agua_ideal_l, aj.agua_delta, 'L', 'var(--bl)') +
+    ajBar('Sono', aj.sono_atual_h, aj.sono_ideal_h, aj.sono_delta, 'h', '#a78bfa');
+
+  var volClr = aj.treino_volume === 'aumentar' ? 'var(--gn)' : aj.treino_volume === 'diminuir' ? 'var(--re)' : 'var(--or)';
+  var volIco = aj.treino_volume === 'aumentar' ? '↑' : aj.treino_volume === 'diminuir' ? '↓' : '→';
+
+  var dicas = (r.dicas || []).map(function(d, i) {
+    return '<div style="display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--br)">' +
+      '<div style="width:22px;height:22px;border-radius:50%;background:var(--ac);color:#000;display:flex;align-items:center;justify-content:center;font-family:\'Bebas Neue\',sans-serif;font-size:13px;flex-shrink:0">' + (i+1) + '</div>' +
+      '<div style="font-size:12px;color:var(--tx);line-height:1.6">' + d + '</div></div>';
+  }).join('');
+
+  var detalhe = [
+    ['🏋️ Treino', an.treino, 'treino'],
+    ['🥗 Dieta', an.dieta, 'dieta'],
+    ['😴 Recuperação (Sono & Água)', an.recuperacao, 'sono'],
+    ['💊 Suporte', an.suporte, 'suporte'],
+    ['📅 Projeção do Período', an.projecao, 'projecao']
+  ].filter(function(x) { return x[1]; }).map(function(x) {
+    return '<div style="padding:11px 0;border-bottom:1px solid var(--br)">' +
+      '<div style="font-weight:700;font-size:13px;margin-bottom:5px;color:' + sc(scores[x[2]] ? scores[x[2]].valor : 6) + '">' + x[0] + '</div>' +
+      '<div style="font-size:12px;color:var(--mu);line-height:1.7">' + x[1] + '</div></div>';
+  }).join('');
+
+  return '<div class="fx jb ai wp g2 mb4">' +
+    '<div><div style="font-family:\'Bebas Neue\',sans-serif;font-size:24px;letter-spacing:3px;color:var(--gn)">✓ RELATÓRIO GERADO</div>' +
+    '<div style="font-size:10px;color:var(--mu)">' + (c.nome || 'Usuário') + ' · ' + new Date().toLocaleDateString('pt-BR') + '</div></div>' +
+    '<button class="btn bo bs" onclick="document.getElementById(\'anform\').style.display=\'block\';document.getElementById(\'anres\').style.display=\'none\';renderAnChk()">↩ Nova análise</button></div>' +
+
+    '<div class="card mb4" style="background:' + sb(scores.geral ? scores.geral.valor : 5) + ';border-color:' + sc(scores.geral ? scores.geral.valor : 5) + '">' +
+    '<div class="fx ai g3 wp"><div><div style="font-family:\'Bebas Neue\',sans-serif;font-size:50px;line-height:1;color:' + sc(scores.geral ? scores.geral.valor : 5) + '">' + (scores.geral ? scores.geral.valor : '?') + '<span style="font-size:22px">/10</span></div>' +
+    '<div class="fl">Score geral</div></div>' +
+    '<div style="flex:1;min-width:180px;font-size:12px;color:var(--tx);line-height:1.7">' + (an.resumo_geral || '') + '</div></div></div>' +
+
+    '<div style="font-family:\'Bebas Neue\',sans-serif;font-size:17px;letter-spacing:2px;margin-bottom:9px">ANÁLISE POR CATEGORIA</div>' +
+    '<div class="srg">' + rings + '</div>' +
+
+    '<div class="card mb4"><div style="font-family:\'Bebas Neue\',sans-serif;font-size:17px;letter-spacing:2px;margin-bottom:4px">AJUSTES RECOMENDADOS</div>' +
+    '<div class="fl" style="margin-bottom:12px">Cinza=atual · Colorido=meta · Tag=diferença</div>' + ajHtml +
+    '<div style="display:flex;gap:8px;align-items:center;padding:9px;background:var(--s2);border-radius:3px;margin-top:8px">' +
+    '<span style="font-size:12px;font-weight:600">Volume de treino:</span>' +
+    '<span style="font-family:\'Bebas Neue\',sans-serif;font-size:15px;color:' + volClr + '">' + volIco + ' ' + (aj.treino_volume || 'manter').toUpperCase() + '</span></div>' +
+    (aj.cardio_recomendacao ? '<div style="margin-top:7px;padding:9px;background:var(--s2);border-radius:3px;font-size:11px;color:var(--mu)">🏃 <strong style="color:var(--tx)">Cardio:</strong> ' + aj.cardio_recomendacao + '</div>' : '') + '</div>' +
+
+    '<div class="card mb4"><div style="font-family:\'Bebas Neue\',sans-serif;font-size:17px;letter-spacing:2px;margin-bottom:12px">ANÁLISE DETALHADA</div>' + detalhe + '</div>' +
+
+    '<div class="card mb4"><div style="font-family:\'Bebas Neue\',sans-serif;font-size:17px;letter-spacing:2px;margin-bottom:4px">🎯 DICAS PRÁTICAS</div>' +
+    '<div class="fl" style="margin-bottom:10px">Ações prioritárias e concretas</div>' + dicas + '</div>' +
+
+    '<div class="disc">⚠️ <strong style="color:var(--tx)">Aviso importante:</strong> Este relatório foi gerado por inteligência artificial com base nas informações fornecidas, tendo caráter <strong style="color:var(--tx)">meramente informativo e estimativo</strong>. <strong style="color:var(--tx)">Não substitui</strong> o acompanhamento de profissionais habilitados. Para orientação individualizada de treino, nutrição e uso de medicamentos — inclusive hormônios, peptídeos e outros compostos — consulte <strong style="color:var(--tx)">médico, nutricionista e educador físico</strong> registrados em seus respectivos conselhos profissionais.</div>';
+}
+
+// ============================================================
+// UTILS
+// ============================================================
+function toB64(file) {
+  return new Promise(function(res, rej) {
+    var r = new FileReader();
+    r.onload = function() { res(r.result.split(',')[1]); };
+    r.onerror = rej;
+    r.readAsDataURL(file);
+  });
+}
+
+async function exDocx(file) {
+  try {
+    var JSZip = await loadZip();
+    var zip = await JSZip.loadAsync(file);
+    var xml = await zip.file('word/document.xml').async('string');
+    return xml.replace(/<w:p[ >][^>]*>/g, '\n').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+  } catch(e) { return ''; }
+}
+
+function loadZip() {
+  return new Promise(function(res, rej) {
+    if (window.JSZip) return res(window.JSZip);
+    var s = document.createElement('script');
+    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
+    s.onload = function() { res(window.JSZip); };
+    s.onerror = rej;
+    document.head.appendChild(s);
+  });
+}
+
+async function apiCall(messages, maxTok) {
+  var resp = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: maxTok || 1000, messages: messages })
+  });
+  var data = await resp.json();
+  if (data.error) throw new Error(data.error.message);
+  return data.content.map(function(c) { return c.text || ''; }).join('');
+}
+
+function parseJ(txt) {
+  var clean = txt.replace(/```json|```/g, '').trim();
+  try { return JSON.parse(clean); } catch(e) {
+    var m = clean.match(/[{[[\s\S]*[}\]]/);
+    if (m) { try { return JSON.parse(m[0]); } catch(e2) {} }
+  }
+  return null;
+}
+
+// ============================================================
+// INICIALIZAÇÃO — dados Lourenço pré-carregados
+// ============================================================
+(function() {
+  // TREINOS do PDF
+  if (S.days.length === 0) {
+    var plano = [
+      { name: 'Treino A — Peito e Costas', muscles: 'Peito, Costas', exercises: [
+        { name: 'Mobilidade ombro e manguito no cabo (aquecimento)', sets:2, reps:'10-15', weight:0, rest:60 },
+        { name: 'Supino máquina articulado (inclinado ou reto)', sets:4, reps:'12-15', weight:0, rest:90 },
+        { name: 'Remada máquina ou articulada pegada neutra', sets:4, reps:'12-15', weight:0, rest:90 },
+        { name: 'Supino reto com halteres', sets:3, reps:'12-15', weight:0, rest:90 },
+        { name: 'Puxada pegada romana ou anatômica', sets:3, reps:'12-15', weight:0, rest:90 },
+        { name: 'Crucifixo inclinado halter ou Crossover polia alta', sets:3, reps:'12-15', weight:0, rest:75 }
+      ]},
+      { name: 'Treino B — Quadríceps', muscles: 'Quadríceps, Panturrilha', exercises: [
+        { name: 'Mobilidade quadril e alongamento no espaldar', sets:2, reps:'10-15', weight:0, rest:60 },
+        { name: 'Agachamento Smith ou Hack (amplitude total)', sets:4, reps:'12-15', weight:0, rest:120 },
+        { name: 'Leg press 45 (amplitude média)', sets:4, reps:'12-15', weight:0, rest:100 },
+        { name: 'Cadeira extensora unilateral', sets:3, reps:'12-15', weight:0, rest:75 },
+        { name: 'Afundo com halteres', sets:3, reps:'12-15', weight:0, rest:75 },
+        { name: 'Gêmeos em pé (falha)', sets:3, reps:'15-20', weight:0, rest:60 }
+      ]},
+      { name: 'Treino C — Bíceps, Tríceps e Ombros', muscles: 'Bíceps, Tríceps, Ombros', exercises: [
+        { name: 'Rosca direta com giro', sets:3, reps:'12-15', weight:0, rest:75 },
+        { name: 'Tríceps corda', sets:3, reps:'12-15', weight:0, rest:75 },
+        { name: 'Rosca simultânea banco 45°', sets:3, reps:'12-15', weight:0, rest:75 },
+        { name: 'Francês cabo com barra', sets:3, reps:'12-15', weight:0, rest:75 },
+        { name: 'Elevação lateral com halter', sets:3, reps:'12-15', weight:0, rest:60 },
+        { name: 'Desenvolvimento máquina', sets:3, reps:'12-15', weight:0, rest:90 }
+      ]},
+      { name: 'Treino D — Peito e Costas', muscles: 'Peito, Costas', exercises: [
+        { name: 'Mobilidade de ombros', sets:2, reps:'10-15', weight:0, rest:60 },
+        { name: 'Supino reto barra', sets:4, reps:'12-15', weight:0, rest:120 },
+        { name: 'Puxada triângulo', sets:4, reps:'12-15', weight:0, rest:90 },
+        { name: 'Crucifixo máquina (inclinação do tronco)', sets:3, reps:'12-15', weight:0, rest:75 },
+        { name: 'Pulldown barra pegada aberta', sets:3, reps:'12-15', weight:0, rest:90 }
+      ]},
+      { name: 'Treino E — Posteriores e Glúteos', muscles: 'Posteriores, Glúteos', exercises: [
+        { name: 'Stiff com halteres', sets:4, reps:'12-15', weight:0, rest:100 },
+        { name: 'Mesa flexora', sets:3, reps:'12-15', weight:0, rest:75 },
+        { name: 'Elevação pélvica', sets:4, reps:'12-15', weight:0, rest:90 },
+        { name: 'Cadeira abdutora (falha)', sets:3, reps:'15-20', weight:0, rest:60 },
+        { name: 'Búlgaro com halteres', sets:3, reps:'10-12', weight:0, rest:90 }
+      ]},
+      { name: 'Treino F — Bíceps, Tríceps e Ombros', muscles: 'Bíceps, Tríceps, Ombros', exercises: [
+        { name: 'Rosca Scotch máquina', sets:3, reps:'12-15', weight:0, rest:75 },
+        { name: 'Tríceps polia unilateral martelo', sets:3, reps:'12-15', weight:0, rest:75 },
+        { name: 'Rosca cabo barra W', sets:3, reps:'12-15', weight:0, rest:75 },
+        { name: 'Testa barra reta', sets:3, reps:'12-15', weight:0, rest:75 },
+        { name: 'Elevação frontal martelo + pegada inversa', sets:3, reps:'12-15', weight:0, rest:60 }
+      ]}
+    ];
+    plano.forEach(function(d) {
+      S.days.push({ id: S.ndi++, name: d.name, muscles: d.muscles,
+        exercises: d.exercises.map(function(e) { return { id: S.nei++, name:e.name, sets:e.sets, reps:e.reps, weight:e.weight, rest:e.rest }; })
+      });
+    });
+  }
+
+  // BIOIMPEDÂNCIA do InBody (21/03/2026)
+  if (!S.corpo) {
+    S.corpo = {
+      nome: 'Lourenço Grieco Neto', dataAv: '2026-03-21',
+      peso: 70.3, altura: 172, idade: 31, sexo: 'M',
+      pgc: 6.6, massaGord: 4.6, massaMusc: 37.8, massaMagra: 65.7,
+      aguaBio: 48.2, prot: 13.2, min: 4.2, imc: 23.8,
+      tmb: 1788, visc: 1, rcq: 0.88, gob: 108, score: 90, pideal: 70.3,
+      seg: {
+        m: { bd:3.99, be:4.16, tr:30.21, pd:9.85, pe:9.61 },
+        g: { bd:0.10, be:0.10, tr:1.60, pd:0.90, pe:0.80 }
+      },
+      obj: '', ativ: 'moderado', per: 8,
+      aguaDia: null, sono: null, sonoQ: '', obs: ''
+    };
+  }
+
+  sv();
+  renderDays();
+  renderCBanner();
+})();
+</script>
+</body>
+</html>
