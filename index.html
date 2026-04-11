@@ -302,9 +302,9 @@ textarea.fi{resize:vertical}.fs option{background:var(--s1)}
     <div class="fg">
       <div class="fg_"><label class="fl">Nome</label><input type="text" class="fi" id="cn" placeholder="Ex: Lourenço"></div>
       <div class="fg_"><label class="fl">Data avaliação</label><input type="date" class="fi" id="cdt"></div>
-      <div class="fg_"><label class="fl">Peso (kg)</label><input type="number" class="fi" id="cpeso" step="0.1" placeholder="70.3"></div>
-      <div class="fg_"><label class="fl">Altura (cm)</label><input type="number" class="fi" id="calt" placeholder="172"></div>
-      <div class="fg_"><label class="fl">Idade</label><input type="number" class="fi" id="cid" placeholder="31"></div>
+      <div class="fg_"><label class="fl">Peso (kg) <span style="font-size:9px;color:var(--gn);font-weight:600">(obrigatório)</span></label><input type="number" class="fi" id="cpeso" step="0.1" placeholder="70.3"></div>
+      <div class="fg_"><label class="fl">Altura (cm) <span style="font-size:9px;color:var(--gn);font-weight:600">(obrigatório)</span></label><input type="number" class="fi" id="calt" placeholder="172"></div>
+      <div class="fg_"><label class="fl">Idade <span style="font-size:9px;color:var(--gn);font-weight:600">(obrigatório)</span></label><input type="number" class="fi" id="cid" placeholder="31"></div>
       <div class="fg_"><label class="fl">Sexo</label><select class="fs" id="csex"><option value="M">Masculino</option><option value="F">Feminino</option></select></div>
     </div>
   </div>
@@ -354,7 +354,7 @@ textarea.fi{resize:vertical}.fs option{background:var(--s1)}
   <div class="card mb4">
     <div class="cttl" style="color:var(--ac)">OBJETIVO & HÁBITOS DIÁRIOS</div>
     <div class="fg">
-      <div class="fg_ gc"><label class="fl">Meta principal</label>
+      <div class="fg_ gc"><label class="fl">Meta principal <span style="font-size:9px;color:var(--gn);font-weight:600">(obrigatório)</span></label>
         <select class="fs" id="cobj">
           <option value="">Selecione...</option>
           <option value="ganho_massa">💪 Ganho de massa muscular</option>
@@ -490,7 +490,7 @@ textarea.fi{resize:vertical}.fs option{background:var(--s1)}
   <div id="anform">
     <div class="card mb4" style="border-color:#1a2200;background:#0a1000">
       <div class="fl" style="color:var(--gn);margin-bottom:7px">🤖 O que será analisado</div>
-      <div style="font-size:12px;color:var(--mu);line-height:1.8">Analisa treino, dieta, cardio, corpo, <strong style="color:var(--tx)">medicamentos e exames médicos</strong>. Apenas os treinos são obrigatórios — tudo o mais é opcional. <strong style="color:var(--gn)">Quanto mais completo o preenchimento, mais acurada e personalizada será a análise.</strong></div>
+      <div style="font-size:12px;color:var(--mu);line-height:1.8">Para uma análise completa são necessários: <strong style="color:var(--tx)">treinos, objetivo, dados básicos (idade, peso, altura) e dieta</strong>. Cardio, bioimpedância, medicamentos e exames são opcionais. <strong style="color:var(--gn)">Quanto mais completo o preenchimento, mais acurada e personalizada será a análise.</strong></div>
     </div>
     <div id="anchk" class="mb4"></div>
     <button class="btn bp fw" style="padding:12px;font-size:11px" onclick="gerarAnalise()">🎯 GERAR ANÁLISE COMPLETA</button>
@@ -1680,16 +1680,19 @@ function delExame(i) { S.exames.splice(i, 1); sv(); renderExames(); }
 // ANÁLISE IA
 // ============================================================
 function renderAnChk() {
+  var c = S.corpo || {};
+  var dadosBasicos = !!(c.idade && c.peso && c.altura);
   var items = [
     {l:'Treinos cadastrados', ok: S.days.length > 0, req: true},
-    {l:'Dieta cadastrada', ok: !!(S.dieta && (S.dieta.refeicoes.length || S.dieta.textoIA)), req: false},
+    {l:'Objetivo definido', ok: !!(c.obj), req: true},
+    {l:'Dados básicos (idade, peso, altura)', ok: dadosBasicos, req: true},
+    {l:'Dieta cadastrada', ok: !!(S.dieta && (S.dieta.refeicoes.length || S.dieta.textoIA)), req: true},
     {l:'Cardio configurado', ok: !!(S.cardio && S.cardio.faz && S.cardio.faz !== 'nao'), req: false},
-    {l:'Medicamentos (opcional)', ok: !!(S.meds && S.meds.length), req: false},
-    {l:'Objetivo definido', ok: !!(S.corpo && S.corpo.obj), req: false},
-    {l:'Dados corporais (opcional)', ok: !!(S.corpo && S.corpo.peso), req: false},
-    {l:'Bioimpedância (opcional)', ok: !!(S.corpo && S.corpo.pgc != null), req: false},
-    {l:'Exames médicos (opcional)', ok: !!(S.exames && S.exames.length), req: false}
+    {l:'Bioimpedância', ok: !!(c.pgc != null), req: false},
+    {l:'Medicamentos', ok: !!(S.meds && S.meds.length), req: false},
+    {l:'Exames médicos', ok: !!(S.exames && S.exames.length), req: false}
   ];
+  var allReqOk = items.filter(function(it) { return it.req; }).every(function(it) { return it.ok; });
   document.getElementById('anchk').innerHTML = '<div class="card">' +
     items.map(function(it) {
       var clr = it.ok ? 'var(--gn)' : it.req ? 'var(--re)' : 'var(--br)';
@@ -1699,10 +1702,16 @@ function renderAnChk() {
         '<span style="color:' + (it.ok ? 'var(--tx)' : 'var(--mu)') + '">' + it.l + '</span>' +
         '<span style="font-family:\'DM Mono\',monospace;font-size:9px;color:' + lclr + ';margin-left:auto">' + lbl + '</span></div>';
     }).join('') + '</div>';
+  var btn = document.querySelector('#anform .btn.bp.fw');
+  if (btn) { btn.disabled = !allReqOk; btn.style.opacity = allReqOk ? '1' : '0.4'; btn.style.cursor = allReqOk ? 'pointer' : 'not-allowed'; }
 }
 
 async function gerarAnalise() {
   var c = S.corpo || {};
+  if (!S.days.length) return toast('Cadastre ao menos um treino', 'er');
+  if (!c.obj) return toast('Defina seu objetivo em Ajustes', 'er');
+  if (!c.idade || !c.peso || !c.altura) return toast('Preencha idade, peso e altura em Ajustes', 'er');
+  if (!S.dieta || (!S.dieta.refeicoes.length && !S.dieta.textoIA)) return toast('Cadastre sua dieta antes de analisar', 'er');
   var ca = S.cardio || {};
   var objMap = {ganho_massa:'Ganho de massa muscular',cutting:'Cutting',recomposicao:'Recomposição corporal',manutencao:'Manutenção',forca:'Ganho de força',definicao:'Definição muscular'};
   var objetivo = objMap[c.obj] || c.obj || 'Não informado';
