@@ -490,7 +490,7 @@ textarea.fi{resize:vertical}.fs option{background:var(--s1)}
   <div id="anform">
     <div class="card mb4" style="border-color:#1a2200;background:#0a1000">
       <div class="fl" style="color:var(--gn);margin-bottom:7px">🤖 O que será analisado</div>
-      <div style="font-size:12px;color:var(--mu);line-height:1.8">Adequação do treino ao objetivo, qualidade da dieta, cardio e medicamentos. <strong style="color:var(--tx)">Bioimpedância e dados corporais são opcionais</strong> — a análise funciona sem eles e fica mais precisa quando disponíveis.</div>
+      <div style="font-size:12px;color:var(--mu);line-height:1.8">Analisa treino, dieta, cardio, corpo, <strong style="color:var(--tx)">medicamentos e exames médicos</strong>. Apenas os treinos são obrigatórios — tudo o mais é opcional. <strong style="color:var(--gn)">Quanto mais completo o preenchimento, mais acurada e personalizada será a análise.</strong></div>
     </div>
     <div id="anchk" class="mb4"></div>
     <button class="btn bp fw" style="padding:12px;font-size:11px" onclick="gerarAnalise()">🎯 GERAR ANÁLISE COMPLETA</button>
@@ -1545,14 +1545,14 @@ function resetExImp() {
 
 function exStClr(st) {
   if (st === 'normal') return 'var(--gn)';
-  if (st === 'alto' || st === 'alto_normal') return 'var(--or)';
-  if (st === 'baixo' || st === 'baixo_normal') return 'var(--bl)';
+  if (st === 'alto_normal' || st === 'baixo_normal') return '#f5c518';
+  if (st === 'alto' || st === 'baixo') return 'var(--or)';
   return 'var(--re)'; // critico
 }
 function exStBg(st) {
   if (st === 'normal') return '#001a0a';
-  if (st === 'alto' || st === 'alto_normal') return '#1a1000';
-  if (st === 'baixo' || st === 'baixo_normal') return '#001418';
+  if (st === 'alto_normal' || st === 'baixo_normal') return '#1a1400';
+  if (st === 'alto' || st === 'baixo') return '#1a1000';
   return '#1a0000';
 }
 
@@ -1684,7 +1684,7 @@ function renderAnChk() {
     {l:'Treinos cadastrados', ok: S.days.length > 0, req: true},
     {l:'Dieta cadastrada', ok: !!(S.dieta && (S.dieta.refeicoes.length || S.dieta.textoIA)), req: false},
     {l:'Cardio configurado', ok: !!(S.cardio && S.cardio.faz && S.cardio.faz !== 'nao'), req: false},
-    {l:'Medicamentos', ok: !!(S.meds && S.meds.length), req: false},
+    {l:'Medicamentos (opcional)', ok: !!(S.meds && S.meds.length), req: false},
     {l:'Objetivo definido', ok: !!(S.corpo && S.corpo.obj), req: false},
     {l:'Dados corporais (opcional)', ok: !!(S.corpo && S.corpo.peso), req: false},
     {l:'Bioimpedância (opcional)', ok: !!(S.corpo && S.corpo.pgc != null), req: false},
@@ -1712,7 +1712,7 @@ async function gerarAnalise() {
   }).join('\n');
   var dietDesc = (S.dieta && S.dieta.textoIA) ? S.dieta.textoIA : ((S.dieta && S.dieta.refeicoes && S.dieta.refeicoes.length) ? S.dieta.refeicoes.map(function(r) { return (r.horario ? r.horario + ' ' : '') + r.nome + ': ' + r.alimentos; }).join('\n') : 'Não informada');
   var mc = S.dieta && S.dieta.macros ? S.dieta.macros : null;
-  var medsDesc = S.meds.length ? S.meds.map(function(m) { return m.nome + ' (' + m.categoria + ') ' + m.dose + ' ' + m.freq + ' via ' + m.via + (m.obs ? ' — ' + m.obs : ''); }).join('\n') : 'Nenhum';
+  var medsDesc = S.meds.length ? S.meds.map(function(m) { return m.nome + ' (' + m.categoria + ') ' + m.dose + ' ' + m.freq + ' via ' + m.via + (m.obs ? ' — ' + m.obs : ''); }).join('\n') : null;
   var cardioDesc = (ca.faz && ca.faz !== 'nao') ? (ca.tipo + ' ' + (ca.duracao||'?') + 'min ' + (ca.freq||'?') + 'x/sem intensidade:' + ca.intensidade + ' momento:' + ca.momento + (ca.obj ? ' objetivo:' + ca.obj : '')) : 'Não pratica cardio';
 
   // Dados corporais — opcionais, incluídos apenas se preenchidos
@@ -1743,13 +1743,13 @@ async function gerarAnalise() {
     '"alimentos":[{"nome":"","atual":"","sugerido":"","delta":"","motivo":""}],' +
     '"analise":{"resumo_geral":"","treino":"","dieta":"","recuperacao":"","suporte":"","projecao":""},' +
     '"dicas":["","","","",""]}\n\n' +
-    'FOCO DA ANÁLISE: (1) adequação do treino ao objetivo, (2) qualidade da dieta, (3) medicamentos/suplementos, (4) se houver exames, integre os marcadores alterados nas recomendações. Dados corporais são opcionais.\n' +
+    'FOCO DA ANÁLISE: (1) adequação do treino ao objetivo, (2) qualidade da dieta, (3) se informados, considere medicamentos/suplementos, (4) se houver exames, integre os marcadores alterados nas recomendações. Dados corporais, medicamentos e exames são opcionais — analise com o que estiver disponível.\n' +
     'Para alimentos: liste cada alimento da dieta com delta exato (ex: +50g) e motivo curto. Delta vazio = manter.\n\n' +
     'OBJETIVO: ' + objetivo + '\n' +
     'TREINOS (' + S.days.length + ' dias, ' + S.logs.length + ' sessões registradas):\n' + trDesc + '\n' +
     'CARDIO: ' + cardioDesc + '\n' +
     'DIETA:\n' + dietDesc + (mc ? '\nMacros estimados: ' + mc.kcal + 'kcal ' + mc.p + 'g prot ' + mc.c + 'g carb ' + mc.g + 'g gord' : '') + '\n' +
-    'MEDICAMENTOS/SUPLEMENTOS:\n' + medsDesc +
+    (medsDesc ? '\nMEDICAMENTOS/SUPLEMENTOS:\n' + medsDesc : '\nMEDICAMENTOS/SUPLEMENTOS: não informados') +
     (examesDesc ? '\n\nEXAMES MÉDICOS:\n' + examesDesc : '\n\nEXAMES MÉDICOS: não informados') +
     (corpoDesc ? '\n\nDADOS CORPORAIS (bioimpedância/manual):\n' + corpoDesc : '\n\nDADOS CORPORAIS: não informados — baseie análise no treino e dieta.');
 
