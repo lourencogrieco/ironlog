@@ -141,6 +141,18 @@ textarea.fi{resize:vertical}.fs option{background:var(--s1)}
 .dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
 /* RESPONSIVO */
 @media(max-width:540px){.fg{grid-template-columns:1fr 1fr}.sgrid{grid-template-columns:1fr 1fr}.stl{font-size:26px}.ir,.ih{grid-template-columns:1fr 40px 55px 55px 55px;font-size:10px}.fg5{grid-template-columns:repeat(5,1fr)}}
+/* PRINT */
+@media print{
+  body{background:#fff!important;color:#000!important}
+  header,nav,#anform,.btn,.disc-btn{display:none!important}
+  .view{display:none!important;padding:0;max-width:100%}
+  #view-analise{display:block!important}
+  #anres{display:block!important}
+  .card{background:#f9f9f9!important;border:1px solid #ddd!important;break-inside:avoid}
+  .stl{color:#000!important}
+  .srg{grid-template-columns:repeat(5,1fr)}
+  :root{--tx:#111;--mu:#555;--br:#ccc;--s1:#f5f5f5;--s2:#eee;--bg:#fff;--gn:#1a7a3f;--ac:#1a7a3f;--or:#b05a00;--re:#c00}
+}
 </style>
 </head>
 <body>
@@ -1921,7 +1933,9 @@ function buildReport(r, c) {
     '<div class="card mb4"><div style="font-family:\'Bebas Neue\',sans-serif;font-size:17px;letter-spacing:2px;margin-bottom:4px">🎯 DICAS PRÁTICAS</div>' +
     '<div class="fl" style="margin-bottom:10px">Ações prioritárias e concretas</div>' + dicas + '</div>' +
 
-    '<div class="disc">⚠️ <strong style="color:var(--tx)">Aviso importante:</strong> Este relatório foi gerado por inteligência artificial com base nas informações fornecidas, tendo caráter <strong style="color:var(--tx)">meramente informativo e estimativo</strong>. <strong style="color:var(--tx)">Não substitui</strong> o acompanhamento de profissionais habilitados. Para orientação individualizada de treino, nutrição e uso de medicamentos — inclusive hormônios, peptídeos e outros compostos — consulte <strong style="color:var(--tx)">médico, nutricionista e educador físico</strong> registrados em seus respectivos conselhos profissionais.</div>';
+    '<div class="disc">⚠️ <strong style="color:var(--tx)">Aviso importante:</strong> Este relatório foi gerado por inteligência artificial com base nas informações fornecidas, tendo caráter <strong style="color:var(--tx)">meramente informativo e estimativo</strong>. <strong style="color:var(--tx)">Não substitui</strong> o acompanhamento de profissionais habilitados. Para orientação individualizada de treino, nutrição e uso de medicamentos — inclusive hormônios, peptídeos e outros compostos — consulte <strong style="color:var(--tx)">médico, nutricionista e educador físico</strong> registrados em seus respectivos conselhos profissionais.</div>' +
+    '<div class="disc-btn" style="display:flex;justify-content:flex-end;margin-top:12px">' +
+    '<button class="btn bo" onclick="window.print()" style="display:flex;align-items:center;gap:6px">🖨️ Imprimir / Exportar PDF</button></div>';
 }
 
 // ============================================================
